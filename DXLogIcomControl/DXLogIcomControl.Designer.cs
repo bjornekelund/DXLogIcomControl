@@ -54,7 +54,7 @@
             // RefLevelSlider
             // 
             this.RefLevelSlider.LargeChange = 1;
-            this.RefLevelSlider.Location = new System.Drawing.Point(68, 12);
+            this.RefLevelSlider.Location = new System.Drawing.Point(96, 12);
             this.RefLevelSlider.Maximum = 20;
             this.RefLevelSlider.Minimum = -20;
             this.RefLevelSlider.Name = "RefLevelSlider";
@@ -66,7 +66,7 @@
             // PwrLevelSlider
             // 
             this.PwrLevelSlider.LargeChange = 1;
-            this.PwrLevelSlider.Location = new System.Drawing.Point(68, 43);
+            this.PwrLevelSlider.Location = new System.Drawing.Point(96, 43);
             this.PwrLevelSlider.Maximum = 100;
             this.PwrLevelSlider.Name = "PwrLevelSlider";
             this.PwrLevelSlider.Size = new System.Drawing.Size(155, 56);
@@ -126,7 +126,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "DXLogIcomControl";
-            this.Text = "ICOM controller";
+            this.Text = "Radio 1 controller";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClosing);
             ((System.ComponentModel.ISupportInitialize)(this.RefLevelSlider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PwrLevelSlider)).EndInit();
