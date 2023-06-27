@@ -11,7 +11,7 @@ namespace DXLog.net
     {
         public static string CusWinName
         {
-            get { return "ICOM Controller"; }
+            get { return "Radio controller"; }
         }
 
         public static int CusFormID
@@ -21,7 +21,7 @@ namespace DXLog.net
         
         private ContestData _cdata = null;
 
-        private FrmMain mainForm = null;
+        private FrmMain _mainform = null;
 
         // Pre-baked CI-V commands
         private byte[] CIVSetFixedModeMain = { 0x27, 0x14, 0x00, 0x01 };
@@ -66,21 +66,33 @@ namespace DXLog.net
         private int CurrentLowerEdge, CurrentUpperEdge, CurrentRefLevel, CurrentPwrLevel;
         private int CurrentMHz = 0;
         private string CurrentMode = string.Empty;
+        private int _radioNumber = 1;
 
-        CATCommon Radio1 = null;
+        CATCommon Radio = null;
 
         RadioSettings Set = new RadioSettings();
         DefaultRadioSettings Def = new DefaultRadioSettings();
+
+        public int RadioNumber
+        {
+            get { return _radioNumber; }
+            set
+            {
+                _radioNumber = value;
+                Text = string.Format("Radio {0} controller", _radioNumber);
+            }
+        }
 
         public DXLogIcomControl()
         {
             InitializeComponent();
         }
 
-        public DXLogIcomControl(ContestData cdata)
+        public DXLogIcomControl(ContestData contestdata)
         {
             InitializeComponent();
-            _cdata = cdata;
+            RadioNumber = 1;
+            _cdata = contestdata;
 
             while (contextMenuStrip1.Items.Count > 0)
                 contextMenuStrip2.Items.Add(contextMenuStrip1.Items[0]);
@@ -181,33 +193,62 @@ namespace DXLog.net
             Config.Save("TransmitPowerPhone", string.Join(";", Set.PwrLevelPhone.Select(i => i.ToString()).ToArray()));
             Config.Save("TransmitPowerDigital", string.Join(";", Set.PwrLevelDigital.Select(i => i.ToString()).ToArray()));
 
-            //mainForm.scheduler.Second -= UpdateRadio;
-            //_cdata.ActiveVFOChanged -= UpdateRadio;
             _cdata.ActiveRadioBandChanged -= UpdateRadio;
+            _cdata.ActiveVFOChanged -= UpdateRadioOnVFOChange;
         }
 
         public override void InitializeLayout()
         {
-            if (mainForm == null)
+            if (_mainform == null)
             {
-                mainForm = (FrmMain)(ParentForm ?? Owner);
+                _mainform = (FrmMain)(ParentForm ?? Owner);
 
-                if (mainForm != null)
+                if (_mainform != null)
                 {
-                    //mainForm.scheduler.Second += UpdateRadio;
-                    //_cdata.ActiveVFOChanged += new ContestData.ActiveVFOChange(UpdateRadio);
                     _cdata.ActiveRadioBandChanged += new ContestData.ActiveRadioBandChange(UpdateRadio);
+                    _cdata.ActiveVFOChanged += new ContestData.ActiveVFOChange(UpdateRadioOnVFOChange);
                 }
             }
 
-            UpdateRadio(1);
+            UpdateRadio(_radioNumber);
         }
+
+        private void UpdateRadioOnVFOChange(int radionumber)
+        {
+            if (_cdata.OPTechnique != ContestData.Technique.SO2V)
+            {
+                UpdateRadio(radionumber);
+            }
+        }
+
+        delegate void UpdateRadioDelegate(int radionumber);
 
         private void UpdateRadio(int radionumber)
         {
-            //System.Threading.Thread.Sleep(100);
-            CurrentMHz = (int)_cdata.Radio1_ActiveFreq / 1000;
-            CurrentMode = _cdata.ActiveR1Mode;
+            if (InvokeRequired)
+            {
+                UpdateRadioDelegate d = new UpdateRadioDelegate(UpdateRadio);
+                Invoke(d, radionumber);
+                return;
+            }
+
+            int _physradio;
+            int _selradio = radionumber < 1 ? _cdata.ActiveRadio : radionumber;
+
+            if (_cdata.OPTechnique == ContestData.Technique.SO2V)
+            {
+                _physradio = 1;
+                CurrentMHz = (int)(_selradio == 1 ? _cdata.Radio1_FreqA : _cdata.Radio1_FreqB) / 1000;
+                CurrentMode = _selradio == 1 ? _cdata.Radio1_ModeA : _cdata.Radio1_ModeB;
+            }
+            else
+            {
+                _physradio = _selradio;
+                if (_radioNumber != _selradio) return;
+                CurrentMHz = (int)(_selradio == 1 ? _cdata.Radio1_ActiveFreq : _cdata.Radio2_ActiveFreq) / 1000;
+                CurrentMode = _selradio == 1 ? _cdata.Radio1_ActiveMode : _cdata.Radio2_ActiveMode;
+            }
+            //label1.Text = string.Format("rn={0} sr={1} MHz={2} Md={3}", radionumber, _selradio, CurrentMHz, CurrentMode);
 
             switch (CurrentMode)
             {
@@ -217,7 +258,9 @@ namespace DXLog.net
                     CurrentRefLevel = Set.RefLevelCW[bandIndex[CurrentMHz]];
                     CurrentPwrLevel = Set.PwrLevelCW[bandIndex[CurrentMHz]];
                     break;
+                case "LSB":
                 case "SSB":
+                case "USB":
                 case "AM":
                 case "FM":
                     CurrentLowerEdge = Set.LowerEdgePhone[bandIndex[CurrentMHz]];
@@ -233,15 +276,13 @@ namespace DXLog.net
                     break;
             }
 
-            Radio1 = mainForm.COMMainProvider.RadioObject(1);
+            Radio = _mainform.COMMainProvider.RadioObject(_physradio);
 
             // Update UI and waterfall edges and ref level in radio 
             UpdateRadioEdges(CurrentLowerEdge, CurrentUpperEdge, RadioEdgeSet[CurrentMHz]);
             rangeLabel.Text = string.Format("WF: {0:N0} - {1:N0}", CurrentLowerEdge, CurrentUpperEdge);
-            //System.Threading.Thread.Sleep(50);
 
             UpdateRadioReflevel(CurrentRefLevel);
-            //System.Threading.Thread.Sleep(50);
             UpdateRadioPwrlevel(CurrentPwrLevel);
         }
 
@@ -254,7 +295,7 @@ namespace DXLog.net
                 GetConfig(false);
             }
 
-            UpdateRadio(1);
+            UpdateRadio(_radioNumber);
         }
 
         private void OnRefSliderMouseClick(object sender, EventArgs e)
@@ -279,7 +320,9 @@ namespace DXLog.net
                 case "CW":
                     Set.RefLevelCW[bandIndex[CurrentMHz]] = CurrentRefLevel;
                     break;
+                case "LSB":
                 case "SSB":
+                case "USB":
                 case "AM":
                 case "FM":
                     Set.RefLevelPhone[bandIndex[CurrentMHz]] = CurrentRefLevel;
@@ -313,7 +356,9 @@ namespace DXLog.net
                     case "CW":
                         Set.PwrLevelCW[bandIndex[CurrentMHz]] = CurrentPwrLevel;
                         break;
+                    case "LSB":
                     case "SSB":
+                    case "USB":
                     case "AM":
                     case "FM":
                         Set.PwrLevelPhone[bandIndex[CurrentMHz]] = CurrentPwrLevel;
@@ -356,7 +401,7 @@ namespace DXLog.net
             //debuglabel2.Text = BitConverter.ToString(CIVSetEdgeSetMain).Replace("-", " ");
             //debuglabel3.Text = BitConverter.ToString(CIVSetEdges).Replace("-", " ");
 
-            if (Radio1 != null && Radio1.IsICOM())
+            if (Radio != null && Radio.IsICOM())
             {
                 Radio1.SendCustomCommand(CIVSetFixedModeMain);
                 Radio1.SendCustomCommand(CIVSetFixedModeSub);
@@ -387,7 +432,7 @@ namespace DXLog.net
             //debuglabel2.Text = "";
             //debuglabel3.Text = "";
 
-            if (Radio1 != null && Radio1.IsICOM())
+            if (Radio != null && Radio.IsICOM())
             {
                 Radio1.SendCustomCommand(CIVSetRefLevelMain);
                 Radio1.SendCustomCommand(CIVSetRefLevelSub);
@@ -411,9 +456,9 @@ namespace DXLog.net
             //debuglabel1.Text = BitConverter.ToString(CIVSetPwrLevel).Replace("-", " ");
             //debuglabel2.Text = "";
             //debuglabel3.Text = "";
-            if (Radio1 != null && Radio1.IsICOM())
+            if (Radio != null && Radio.IsICOM())
             {
-                Radio1.SendCustomCommand(CIVSetPwrLevel);
+                Radio.SendCustomCommand(CIVSetPwrLevel);
             }
         }
     }

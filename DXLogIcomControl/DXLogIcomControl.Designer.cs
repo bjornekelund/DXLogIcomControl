@@ -44,9 +44,10 @@
             // RefLevelLabel
             // 
             this.RefLevelLabel.AutoSize = true;
-            this.RefLevelLabel.Location = new System.Drawing.Point(4, 15);
+            this.RefLevelLabel.Location = new System.Drawing.Point(5, 18);
+            this.RefLevelLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.RefLevelLabel.Name = "RefLevelLabel";
-            this.RefLevelLabel.Size = new System.Drawing.Size(65, 13);
+            this.RefLevelLabel.Size = new System.Drawing.Size(84, 17);
             this.RefLevelLabel.TabIndex = 1;
             this.RefLevelLabel.Text = "REF: +20dB";
             // 
@@ -57,7 +58,7 @@
             this.RefLevelSlider.Maximum = 20;
             this.RefLevelSlider.Minimum = -20;
             this.RefLevelSlider.Name = "RefLevelSlider";
-            this.RefLevelSlider.Size = new System.Drawing.Size(116, 45);
+            this.RefLevelSlider.Size = new System.Drawing.Size(155, 56);
             this.RefLevelSlider.TabIndex = 1;
             this.RefLevelSlider.Scroll += new System.EventHandler(this.OnRefSliderMouseClick);
             this.RefLevelSlider.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnRefSliderMouseClick);
@@ -68,7 +69,7 @@
             this.PwrLevelSlider.Location = new System.Drawing.Point(68, 43);
             this.PwrLevelSlider.Maximum = 100;
             this.PwrLevelSlider.Name = "PwrLevelSlider";
-            this.PwrLevelSlider.Size = new System.Drawing.Size(116, 45);
+            this.PwrLevelSlider.Size = new System.Drawing.Size(155, 56);
             this.PwrLevelSlider.TabIndex = 2;
             this.PwrLevelSlider.Scroll += new System.EventHandler(this.OnPwrSliderMouseClick);
             this.PwrLevelSlider.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnPwrSliderMouseClick);
@@ -76,40 +77,43 @@
             // PwrLevelLabel
             // 
             this.PwrLevelLabel.AutoSize = true;
-            this.PwrLevelLabel.Location = new System.Drawing.Point(4, 46);
+            this.PwrLevelLabel.Location = new System.Drawing.Point(5, 57);
+            this.PwrLevelLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.PwrLevelLabel.Name = "PwrLevelLabel";
-            this.PwrLevelLabel.Size = new System.Drawing.Size(65, 13);
+            this.PwrLevelLabel.Size = new System.Drawing.Size(84, 17);
             this.PwrLevelLabel.TabIndex = 4;
             this.PwrLevelLabel.Text = "PWR: 100%";
             // 
             // contextMenuStrip2
             // 
+            this.contextMenuStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.propertiesToolStripMenuItem});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(128, 26);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(146, 28);
             // 
             // propertiesToolStripMenuItem
             // 
             this.propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
-            this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(145, 24);
             this.propertiesToolStripMenuItem.Text = "Properties";
             this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.propertiesToolStripMenuItem_Click);
             // 
             // rangeLabel
             // 
             this.rangeLabel.AutoSize = true;
-            this.rangeLabel.Location = new System.Drawing.Point(32, 75);
+            this.rangeLabel.Location = new System.Drawing.Point(43, 92);
+            this.rangeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.rangeLabel.Name = "rangeLabel";
-            this.rangeLabel.Size = new System.Drawing.Size(117, 13);
+            this.rangeLabel.Size = new System.Drawing.Size(154, 17);
             this.rangeLabel.TabIndex = 5;
             this.rangeLabel.Text = "WF: 432,400 - 432,600";
             // 
             // DXLogIcomControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(197, 91);
+            this.ClientSize = new System.Drawing.Size(263, 112);
             this.ContextMenuStrip = this.contextMenuStrip2;
             this.Controls.Add(this.rangeLabel);
             this.Controls.Add(this.PwrLevelLabel);
@@ -118,6 +122,7 @@
             this.Controls.Add(this.RefLevelLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.FormID = 1000;
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "DXLogIcomControl";
