@@ -7,7 +7,7 @@ using IOComm;
 
 namespace DXLog.net
 {
-    public partial class DXLogRadioControl : KForm
+    public partial class FrmRadioControl : KForm
     {
         public static string CusWinName
         {
@@ -90,12 +90,12 @@ namespace DXLog.net
             }
         }
 
-        public DXLogRadioControl()
+        public FrmRadioControl()
         {
             InitializeComponent();
         }
 
-        public DXLogRadioControl(ContestData contestdata)
+        public FrmRadioControl(ContestData contestdata)
         {
             InitializeComponent();
             RadioNumber = 1;
@@ -376,7 +376,7 @@ namespace DXLog.net
 
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form prop = new RadioControlProperties(Settings);
+            Form prop = new FrmRadioControlProperties(Settings);
   
             if (prop.ShowDialog() == DialogResult.OK)
             {

@@ -6,16 +6,16 @@ using ConfigFile;
 
 namespace DXLog.net
 {
-    public partial class RadioControlProperties : Form
+    public partial class FrmRadioControlProperties : Form
     {
         public RadioSettings Settings; // Why is this public not visible from DXLogIcomControl?
 
-        public RadioControlProperties()
+        public FrmRadioControlProperties()
         {
             InitializeComponent();
         }
 
-        public RadioControlProperties(RadioSettings sett)
+        public FrmRadioControlProperties(RadioSettings sett)
         {
             InitializeComponent();
 
