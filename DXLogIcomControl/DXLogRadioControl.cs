@@ -7,7 +7,7 @@ using IOComm;
 
 namespace DXLog.net
 {
-    public partial class DXLogIcomControl : KForm
+    public partial class DXLogRadioControl : KForm
     {
         public static string CusWinName
         {
@@ -68,6 +68,13 @@ namespace DXLog.net
         private string CurrentMode = string.Empty;
         private int _radioNumber = 1;
 
+        private enum RadioTypeType
+        {
+            ICOM, ICOM905, ICOM9700, Elecraft, Yaesu, None
+        }
+
+        private RadioTypeType RadioType;
+
         CATCommon Radio = null;
 
         RadioSettings Settings = new RadioSettings();
@@ -83,15 +90,16 @@ namespace DXLog.net
             }
         }
 
-        public DXLogIcomControl()
+        public DXLogRadioControl()
         {
             InitializeComponent();
         }
 
-        public DXLogIcomControl(ContestData contestdata)
+        public DXLogRadioControl(ContestData contestdata)
         {
             InitializeComponent();
             RadioNumber = 1;
+               
             _cdata = contestdata;
 
             while (contextMenuStrip1.Items.Count > 0)
@@ -162,42 +170,49 @@ namespace DXLog.net
         {
             try
             {
-                Settings.Configuration = Config.Read("WaterfallConfiguration", 1) - 1;
+                string config = Config.Read("RCWaterfallConfiguration", "A");
+
+                if (config.Length > 0) {
+                    Settings.Configuration = config[0] - 'A';
+                }
 
                 if (Settings.Configuration < 0 || Settings.Configuration > Settings.Configs) 
                 { 
-                    Settings.Configuration = 0; 
+                    Settings.Configuration = 0;
+                    Config.Save("RCWaterfallConfiguration", "A");
                 }
+
+                Settings.PowerControl = Config.Read("RCPowerControl", true);
+                Settings.RefLevelControl = Config.Read("RCRefControl", true);
 
                 for (int i = 0; i < Settings.Configs; i++)
                 {
                     char letter = (char)('A' + i);
 
-                    Settings.LowerEdgeCW[i] = Config.Read("WaterfallLowerEdgeCW" + letter, Default.LowerEdgeCW).Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.UpperEdgeCW[i] = Config.Read("WaterfallUpperEdgeCW" + letter, Default.UpperEdgeCW).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.LowerEdgeCW[i] = Config.Read("RCWaterfallLowerEdgeCW" + letter, Default.LowerEdgeCW).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.UpperEdgeCW[i] = Config.Read("RCWaterfallUpperEdgeCW" + letter, Default.UpperEdgeCW).Split(';').Select(s => int.Parse(s)).ToArray();
 
-                    Settings.LowerEdgePhone[i] = Config.Read("WaterfallLowerEdgePhone" + letter, Default.LowerEdgePhone).Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.UpperEdgePhone[i] = Config.Read("WaterfallUpperEdgePhone" + letter, Default.UpperEdgePhone).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.LowerEdgePhone[i] = Config.Read("RCWaterfallLowerEdgePhone" + letter, Default.LowerEdgePhone).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.UpperEdgePhone[i] = Config.Read("RCWaterfallUpperEdgePhone" + letter, Default.UpperEdgePhone).Split(';').Select(s => int.Parse(s)).ToArray();
 
-                    Settings.LowerEdgeDigital[i] = Config.Read("WaterfallLowerEdgeDigital" + letter, Default.LowerEdgeDigital).Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.UpperEdgeDigital[i] = Config.Read("WaterfallUpperEdgeDigital" + letter, Default.UpperEdgeDigital).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.LowerEdgeDigital[i] = Config.Read("RCWaterfallLowerEdgeDigital" + letter, Default.LowerEdgeDigital).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.UpperEdgeDigital[i] = Config.Read("RCWaterfallUpperEdgeDigital" + letter, Default.UpperEdgeDigital).Split(';').Select(s => int.Parse(s)).ToArray();
 
-                    Settings.EdgeSet[i] = Config.Read("WaterfallEdgeSet" + letter, Default.EdgeSet);
-                    Settings.Scrolling[i] = Config.Read("WaterfallScrolling" + letter, Default.UseScrolling);
+                    Settings.EdgeSet[i] = Config.Read("RCWaterfallEdgeSet" + letter, Default.EdgeSet);
+                    Settings.Scrolling[i] = Config.Read("RCWaterfallScrolling" + letter, Default.UseScrolling);
 
                     if (all)
                     {
-                        Settings.RefLevelCW[i] = Config.Read("WaterfallRefCW" + letter, Default.RefLevelCW).Split(';').Select(s => int.Parse(s)).ToArray();
-                        Settings.RefLevelPhone[i] = Config.Read("WaterfallRefPhone" + letter, Default.RefLevelPhone).Split(';').Select(s => int.Parse(s)).ToArray();
-                        Settings.RefLevelDigital[i] = Config.Read("WaterfallRefDigital" + letter, Default.RefLevelDigital).Split(';').Select(s => int.Parse(s)).ToArray();
+                        Settings.RefLevelCW[i] = Config.Read("RCWaterfallRefCW" + letter, Default.RefLevelCW).Split(';').Select(s => int.Parse(s)).ToArray();
+                        Settings.RefLevelPhone[i] = Config.Read("RCWaterfallRefPhone" + letter, Default.RefLevelPhone).Split(';').Select(s => int.Parse(s)).ToArray();
+                        Settings.RefLevelDigital[i] = Config.Read("RCWaterfallRefDigital" + letter, Default.RefLevelDigital).Split(';').Select(s => int.Parse(s)).ToArray();
                     }
                 }
                 if (all)
                 {
-                    Settings.PwrLevelCW = Config.Read("TransmitPowerCW", Default.PwrLevelCW).Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.PwrLevelPhone = Config.Read("TransmitPowerPhone", Default.PwrLevelPhone).Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.PwrLevelDigital = Config.Read("TransmitPowerDigital", Default.PwrLevelDigital).Split(';').Select(s => int.Parse(s)).ToArray();
-
+                    Settings.PwrLevelCW = Config.Read("RCTransmitPowerCW", Default.PwrLevelCW).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.PwrLevelPhone = Config.Read("RCTransmitPowerPhone", Default.PwrLevelPhone).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.PwrLevelDigital = Config.Read("RCTransmitPowerDigital", Default.PwrLevelDigital).Split(';').Select(s => int.Parse(s)).ToArray();
                 }
             }
             catch
@@ -233,17 +248,20 @@ namespace DXLog.net
             for (int i = 0; i < Settings.Configs; i++)
             {
                 char letter = (char)('A' + i);
-                Config.Save("WaterfallRefCW" + letter, string.Join(";", Settings.RefLevelCW[i].Select(j => j.ToString()).ToArray()));
-                Config.Save("WaterfallRefPhone" + letter, string.Join(";", Settings.RefLevelPhone[i].Select(j => j.ToString()).ToArray()));
-                Config.Save("WaterfallRefDigital" + letter, string.Join(";", Settings.RefLevelDigital[i].Select(j => j.ToString()).ToArray()));
+                Config.Save("RCWaterfallRefCW" + letter, string.Join(";", Settings.RefLevelCW[i].Select(j => j.ToString()).ToArray()));
+                Config.Save("RCWaterfallRefPhone" + letter, string.Join(";", Settings.RefLevelPhone[i].Select(j => j.ToString()).ToArray()));
+                Config.Save("RCWaterfallRefDigital" + letter, string.Join(";", Settings.RefLevelDigital[i].Select(j => j.ToString()).ToArray()));
             }
 
-            Config.Save("TransmitPowerCW", string.Join(";", Settings.PwrLevelCW.Select(j => j.ToString()).ToArray()));
-            Config.Save("TransmitPowerPhone", string.Join(";", Settings.PwrLevelPhone.Select(j => j.ToString()).ToArray()));
-            Config.Save("TransmitPowerDigital", string.Join(";", Settings.PwrLevelDigital.Select(j => j.ToString()).ToArray()));
+            Config.Save("RCTransmitPowerCW", string.Join(";", Settings.PwrLevelCW.Select(j => j.ToString()).ToArray()));
+            Config.Save("RCTransmitPowerPhone", string.Join(";", Settings.PwrLevelPhone.Select(j => j.ToString()).ToArray()));
+            Config.Save("RCTransmitPowerDigital", string.Join(";", Settings.PwrLevelDigital.Select(j => j.ToString()).ToArray()));
+
+            Config.Save("RCPowerControl", Settings.PowerControl);
+            Config.Save("RCRefControl", Settings.RefLevelControl);
 
             _cdata.ActiveRadioBandChanged -= UpdateRadio;
-            _cdata.ActiveVFOChanged -= UpdateRadioOnVFOChange;
+            _cdata.ActiveVFOChanged -= OnVFOChange;
         }
 
         public override void InitializeLayout()
@@ -254,20 +272,25 @@ namespace DXLog.net
 
                 if (_mainform != null)
                 {
-                    _cdata.ActiveRadioBandChanged += new ContestData.ActiveRadioBandChange(UpdateRadio);
-                    _cdata.ActiveVFOChanged += new ContestData.ActiveVFOChange(UpdateRadioOnVFOChange);
+                    _cdata.ActiveRadioBandChanged += new ContestData.ActiveRadioBandChange(OnBandChange);
+                    _cdata.ActiveVFOChanged += new ContestData.ActiveVFOChange(OnVFOChange);
                 }
             }
 
             UpdateRadio(_radioNumber);
         }
 
-        private void UpdateRadioOnVFOChange(int radionumber)
+        private void OnVFOChange(int radionumber)
         {
             if (_cdata.OPTechnique != ContestData.Technique.SO2V)
             {
                 UpdateRadio(radionumber);
             }
+        }
+
+        private void OnBandChange(int radionumber)
+        {
+            UpdateRadio(radionumber);
         }
 
         delegate void UpdateRadioDelegate(int radionumber);
@@ -281,23 +304,41 @@ namespace DXLog.net
                 return;
             }
 
-            int _physradio;
+            int _physicalRadio;
             int _selradio = radionumber < 1 ? _cdata.ActiveRadio : radionumber;
 
             if (_cdata.OPTechnique == ContestData.Technique.SO2V)
             {
-                _physradio = 1;
+                _physicalRadio = 1;
                 CurrentMHz = (int)(_selradio == 1 ? _cdata.Radio1_FreqA : _cdata.Radio1_FreqB) / 1000;
                 CurrentMode = _selradio == 1 ? _cdata.Radio1_ModeA : _cdata.Radio1_ModeB;
             }
             else
             {
-                _physradio = _selradio;
+                _physicalRadio = _selradio;
                 if (_radioNumber != _selradio) return;
                 CurrentMHz = (int)(_selradio == 1 ? _cdata.Radio1_ActiveFreq : _cdata.Radio2_ActiveFreq) / 1000;
                 CurrentMode = _selradio == 1 ? _cdata.Radio1_ActiveMode : _cdata.Radio2_ActiveMode;
             }
             //label1.Text = string.Format("rn={0} sr={1} MHz={2} Md={3}", radionumber, _selradio, CurrentMHz, CurrentMode);
+
+            Radio = _mainform.COMMainProvider.RadioObject(_physicalRadio);
+
+            if (Radio == null)
+            {
+                RadioType = RadioTypeType.None;
+            }
+            else if (Radio.IsICOM())
+            {
+                // Need to figure out how to determine is radio is "regular" or IC-905 or IC-9700.
+                RadioType = RadioTypeType.ICOM;
+                Settings.HasEdgeControl = true;
+                Settings.HasScroll = true;
+            }
+            else
+            {
+                RadioType = RadioTypeType.None;
+            }
 
             switch (CurrentMode)
             {
@@ -325,10 +366,8 @@ namespace DXLog.net
                     break;
             }
 
-            Radio = _mainform.COMMainProvider.RadioObject(_physradio);
-
             // Update UI and waterfall edges and ref level in radio 
-            UpdateRadioEdges(CurrentLowerEdge, CurrentUpperEdge, RadioEdgeSet[CurrentMHz]);
+            UpdateRadioEdges(CurrentLowerEdge, CurrentUpperEdge);
             rangeLabel.Text = string.Format("WF: {0:N0} - {1:N0}", CurrentLowerEdge, CurrentUpperEdge);
 
             UpdateRadioReflevel(CurrentRefLevel);
@@ -337,7 +376,7 @@ namespace DXLog.net
 
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form prop = new IcomProperties(Settings);
+            Form prop = new RadioControlProperties(Settings);
   
             if (prop.ShowDialog() == DialogResult.OK)
             {
@@ -396,8 +435,6 @@ namespace DXLog.net
         private void OnPwrSlider() 
         { 
             CurrentPwrLevel = PwrLevelSlider.Value;
-            UpdateRadioPwrlevel(CurrentPwrLevel);
-
             if (CurrentMHz != 0)
             {
                 switch (CurrentMode)
@@ -416,48 +453,69 @@ namespace DXLog.net
                         Settings.PwrLevelDigital[BandIndex[CurrentMHz]] = CurrentPwrLevel;
                         break;
                 }
+                UpdateRadioPwrlevel(CurrentPwrLevel);
             }
         }
 
-        // Update radio with new waterfall edges
-        private void UpdateRadioEdges(int lower_edge, int upper_edge, int ICOMedgeSegment)
+        private void RefLevelLabel_Click(object sender, EventArgs e)
         {
-            // Compose CI-V command to set waterfall edges
-            byte[] CIVSetEdges = new byte[]
+            Settings.RefLevelControl = !Settings.RefLevelControl;
+            Config.Save("RCRefControl", Settings.RefLevelControl);
+            UpdateRadioReflevel(CurrentRefLevel);
+        }
+
+        private void PwrLevelLabel_Click(object sender, EventArgs e)
+        {
+            Settings.PowerControl = !Settings.PowerControl;
+            Config.Save("RCPowerControl", Settings.PowerControl);
+            UpdateRadioPwrlevel(CurrentPwrLevel);
+        }
+
+        // Update radio with new waterfall edges
+        private void UpdateRadioEdges(int lower_edge, int upper_edge)
+        {
+            switch (RadioType)
             {
-                0x27, 0x1e,
-                (byte)((ICOMedgeSegment / 10) * 16 + (ICOMedgeSegment % 10)),
-                (byte)Settings.EdgeSet[Settings.Configuration],
-                0x00, // Lower 10Hz & 1Hz
-                (byte)((lower_edge % 10) * 16 + 0), // 1kHz & 100Hz
-                (byte)(((lower_edge / 100) % 10) * 16 + ((lower_edge / 10) % 10)), // 100kHz & 10kHz
-                (byte)(((lower_edge / 10000) % 10) * 16 + (lower_edge / 1000) % 10), // 10MHz & 1MHz
-                (byte)(((lower_edge / 1000000) % 10) * 16 + (lower_edge / 100000) % 10), // 1GHz & 100MHz
-                0x00, // // Upper 10Hz & 1Hz 
-                (byte)((upper_edge % 10) * 16 + 0), // 1kHz & 100Hz
-                (byte)(((upper_edge / 100) % 10) * 16 + (upper_edge / 10) % 10), // 100kHz & 10kHz
-                (byte)(((upper_edge / 10000) % 10) * 16 + (upper_edge / 1000) % 10), // 10MHz & 1MHz
-                (byte)(((upper_edge / 1000000) % 10) * 16 + (upper_edge / 100000) % 10) // 1GHz & 100MHz
-            };
+                case RadioTypeType.ICOM:
+                    // Compose CI-V command to set waterfall edges
+                    byte[] CIVSetEdges = new byte[] {
+                    0x27, 0x1e,
+                    (byte)((RadioEdgeSet[CurrentMHz] / 10) * 16 + (RadioEdgeSet[CurrentMHz] % 10)),
+                    (byte)Settings.EdgeSet[Settings.Configuration],
+                    0x00, // Lower 10Hz & 1Hz
+                    (byte)((lower_edge % 10) * 16 + 0), // 1kHz & 100Hz
+                    (byte)(((lower_edge / 100) % 10) * 16 + ((lower_edge / 10) % 10)), // 100kHz & 10kHz
+                    (byte)(((lower_edge / 10000) % 10) * 16 + (lower_edge / 1000) % 10), // 10MHz & 1MHz
+                    (byte)(((lower_edge / 1000000) % 10) * 16 + (lower_edge / 100000) % 10), // 1GHz & 100MHz
+                    0x00, // // Upper 10Hz & 1Hz 
+                    (byte)((upper_edge % 10) * 16 + 0), // 1kHz & 100Hz
+                    (byte)(((upper_edge / 100) % 10) * 16 + (upper_edge / 10) % 10), // 100kHz & 10kHz
+                    (byte)(((upper_edge / 10000) % 10) * 16 + (upper_edge / 1000) % 10), // 10MHz & 1MHz
+                    (byte)(((upper_edge / 1000000) % 10) * 16 + (upper_edge / 100000) % 10) };// 1GHz & 100MHz
 
-            CIVSetFixedModeMain[3] = (byte)(Settings.Scrolling[Settings.Configuration] ? 0x03 : 0x01);
-            CIVSetEdgeSetMain[3] = (byte)Settings.EdgeSet[Settings.Configuration];
+                    CIVSetFixedModeMain[3] = (byte)(Settings.Scrolling[Settings.Configuration] ? 0x03 : 0x01);
+                    CIVSetEdgeSetMain[3] = (byte)Settings.EdgeSet[Settings.Configuration];
 
-            //CIVSetFixedModeSub[3] = (byte)(Set.Scrolling ? 0x03 : 0x01);
-            //CIVSetEdgeSetSub[3] = (byte)Set.EdgeSet;
+                    //CIVSetFixedModeSub[3] = (byte)(Set.Scrolling ? 0x03 : 0x01);
+                    //CIVSetEdgeSetSub[3] = (byte)Set.EdgeSet;
 
-            //debuglabel1.Text = BitConverter.ToString(CIVSetFixedModeMain).Replace("-", " ");
-            //debuglabel2.Text = BitConverter.ToString(CIVSetEdgeSetMain).Replace("-", " ");
-            //debuglabel3.Text = BitConverter.ToString(CIVSetEdges).Replace("-", " ");
+                    //debuglabel1.Text = BitConverter.ToString(CIVSetFixedModeMain).Replace("-", " ");
+                    //debuglabel2.Text = BitConverter.ToString(CIVSetEdgeSetMain).Replace("-", " ");
+                    //debuglabel3.Text = BitConverter.ToString(CIVSetEdges).Replace("-", " ");
 
-            if (Radio != null && Radio.IsICOM())
-            {
-                Radio.SendCustomCommand(CIVSetFixedModeMain);
-                //Radio.SendCustomCommand(CIVSetFixedModeSub);
-                Radio.SendCustomCommand(CIVSetEdgeSetMain);
-                //Radio.SendCustomCommand(CIVSetEdgeSetSub);
-                Radio.SendCustomCommand(CIVSetEdges);
-            }
+                    Radio.SendCustomCommand(CIVSetFixedModeMain);
+                    //Radio.SendCustomCommand(CIVSetFixedModeSub);
+                    Radio.SendCustomCommand(CIVSetEdgeSetMain);
+                    //Radio.SendCustomCommand(CIVSetEdgeSetSub);
+                    Radio.SendCustomCommand(CIVSetEdges);
+                    break;
+                case RadioTypeType.Elecraft:
+                    break;
+                case RadioTypeType.Yaesu:
+                    break;
+                default:
+                    break;
+            }    
         }
 
         // Update radio with new REF level
@@ -465,26 +523,44 @@ namespace DXLog.net
         {
             if (RefLevelLabel != null)
             {
-                RefLevelSlider.Value = ref_level;
-                RefLevelLabel.Text = string.Format("REF: {0,3:+#;-#;0}dB", ref_level);
-            }
+                if (Settings.RefLevelControl)
+                {
+                    RefLevelSlider.Value = ref_level;
+                    RefLevelLabel.Text = string.Format("REF: {0,3:+#;-#;0}dB", ref_level);
+                    switch (RadioType)
+                    {
+                        case RadioTypeType.ICOM:
+                            int absRefLevel = (ref_level >= 0) ? ref_level : -ref_level;
 
-            int absRefLevel = (ref_level >= 0) ? ref_level : -ref_level;
+                            CIVSetRefLevelMain[3] = (byte)((absRefLevel / 10) * 16 + absRefLevel % 10);
+                            CIVSetRefLevelMain[5] = (ref_level >= 0) ? (byte)0 : (byte)1;
 
-            CIVSetRefLevelMain[3] = (byte)((absRefLevel / 10) * 16 + absRefLevel % 10);
-            CIVSetRefLevelMain[5] = (ref_level >= 0) ? (byte)0 : (byte)1;
+                            //CIVSetRefLevelSub[3] = (byte)((absRefLevel / 10) * 16 + absRefLevel % 10);
+                            //CIVSetRefLevelSub[5] = (ref_level >= 0) ? (byte)0 : (byte)1;
 
-            //CIVSetRefLevelSub[3] = (byte)((absRefLevel / 10) * 16 + absRefLevel % 10);
-            //CIVSetRefLevelSub[5] = (ref_level >= 0) ? (byte)0 : (byte)1;
+                            //debuglabel1.Text = BitConverter.ToString(CIVSetRefLevel).Replace("-", " ");
+                            //debuglabel2.Text = "";
+                            //debuglabel3.Text = "";
 
-            //debuglabel1.Text = BitConverter.ToString(CIVSetRefLevel).Replace("-", " ");
-            //debuglabel2.Text = "";
-            //debuglabel3.Text = "";
-
-            if (Radio != null && Radio.IsICOM())
-            {
-                Radio.SendCustomCommand(CIVSetRefLevelMain);
-                //Radio.SendCustomCommand(CIVSetRefLevelSub);
+                            if (Radio != null && Radio.IsICOM() && Settings.RefLevelControl)
+                            {
+                                Radio.SendCustomCommand(CIVSetRefLevelMain);
+                                //Radio.SendCustomCommand(CIVSetRefLevelSub);
+                            }
+                            break;
+                        case RadioTypeType.Elecraft:
+                            break;
+                        case RadioTypeType.Yaesu:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    RefLevelSlider.Value = 0;
+                    RefLevelLabel.Text = "REF: -";
+                }
             }
         }
 
@@ -493,21 +569,44 @@ namespace DXLog.net
         {
             if (PwrLevelSlider != null)
             {
-                PwrLevelSlider.Value = pwr_level;
-                PwrLevelLabel.Text = string.Format("PWR:{0,3}%", pwr_level);
-            }
+                if (Settings.PowerControl)
+                {
+                    PwrLevelSlider.Value = pwr_level;
+                    PwrLevelLabel.Text = string.Format("PWR:{0,3}%", pwr_level);
 
-            int icomPower = (int)(255.0f * pwr_level / 100.0f + 0.99f); // Weird ICOM mapping of percent to binary
+                    if (Settings.RefLevelControl)
+                    {
+                        switch (RadioType)
+                        {
+                            case RadioTypeType.ICOM:
+                                int icomPower = (int)(255.0f * pwr_level / 100.0f + 0.99f); // Weird ICOM mapping of percent to binary
 
-            CIVSetPwrLevel[2] = (byte)((icomPower / 100) % 10);
-            CIVSetPwrLevel[3] = (byte)((((icomPower / 10) % 10) << 4) + (icomPower % 10));
+                                CIVSetPwrLevel[2] = (byte)((icomPower / 100) % 10);
+                                CIVSetPwrLevel[3] = (byte)((((icomPower / 10) % 10) << 4) + (icomPower % 10));
 
-            //debuglabel1.Text = BitConverter.ToString(CIVSetPwrLevel).Replace("-", " ");
-            //debuglabel2.Text = "";
-            //debuglabel3.Text = "";
-            if (Radio != null && Radio.IsICOM())
-            {
-                Radio.SendCustomCommand(CIVSetPwrLevel);
+                                //debuglabel1.Text = BitConverter.ToString(CIVSetPwrLevel).Replace("-", " ");
+                                //debuglabel2.Text = "";
+                                //debuglabel3.Text = "";
+                                if (Radio != null && Radio.IsICOM())
+                                {
+                                    Radio.SendCustomCommand(CIVSetPwrLevel);
+                                }
+                                break;
+                            case RadioTypeType.Elecraft:
+                                break;
+                            case RadioTypeType.Yaesu:
+                                break;
+                            default:
+                                break;
+
+                        }
+                    }
+                    else
+                    {
+                        PwrLevelSlider.Value = 0;
+                        PwrLevelLabel.Text = "PWR: -";
+                    }
+                }
             }
         }
     }
@@ -531,11 +630,13 @@ namespace DXLog.net
 
         public int EdgeSet = 4;
         public bool UseScrolling = false;
+        public bool NoRefLevel = false;
+        public bool NoPowerLevel = false;
     }
 
     public class RadioSettings
     {
-        public int Configuration;
+        public int Configuration = 0;
         public readonly int Configs = 4;
         public readonly int Bands = 14;
 
@@ -553,5 +654,9 @@ namespace DXLog.net
         public int[] PwrLevelDigital;
         public int [] EdgeSet;
         public bool [] Scrolling;
+        public bool RefLevelControl;
+        public bool PowerControl;
+        public bool HasEdgeControl;
+        public bool HasScroll;
     }
 }

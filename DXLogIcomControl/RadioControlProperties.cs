@@ -6,16 +6,16 @@ using ConfigFile;
 
 namespace DXLog.net
 {
-    public partial class IcomProperties : Form
+    public partial class RadioControlProperties : Form
     {
         public RadioSettings Settings; // Why is this public not visible from DXLogIcomControl?
 
-        public IcomProperties()
+        public RadioControlProperties()
         {
             InitializeComponent();
         }
 
-        public IcomProperties(RadioSettings sett)
+        public RadioControlProperties(RadioSettings sett)
         {
             InitializeComponent();
 
@@ -33,6 +33,9 @@ namespace DXLog.net
                 cbConfiguration.Items.Add("Configuration " + letter);
             }
 
+            cbEdgeSelection.Enabled = Settings.HasEdgeControl;
+            chkUseScrollMode.Enabled = Settings.HasScroll;
+
             refreshTable();
         }
 
@@ -40,7 +43,6 @@ namespace DXLog.net
         {
             cbEdgeSelection.SelectedIndex = Settings.EdgeSet[Settings.Configuration] - 1;
             chkUseScrollMode.Checked = Settings.Scrolling[Settings.Configuration];
-            cbConfiguration.SelectedIndex = Settings.Configuration;
 
             for (int i = 0; i < Settings.Bands; i++)
             {
@@ -51,13 +53,16 @@ namespace DXLog.net
                 TextBox tbdgl = (TextBox)Controls.Find(string.Format("tbdgl{0}", i), true)[0];
                 TextBox tbdgu = (TextBox)Controls.Find(string.Format("tbdgu{0}", i), true)[0];
 
-                tbcwl.Text = Settings.LowerEdgeCW[cbConfiguration.SelectedIndex][i].ToString();
-                tbcwu.Text = Settings.UpperEdgeCW[cbConfiguration.SelectedIndex][i].ToString();
-                tbphl.Text = Settings.LowerEdgePhone[cbConfiguration.SelectedIndex][i].ToString();
-                tbphu.Text = Settings.UpperEdgePhone[cbConfiguration.SelectedIndex][i].ToString();
-                tbdgl.Text = Settings.LowerEdgeDigital[cbConfiguration.SelectedIndex][i].ToString();
-                tbdgu.Text = Settings.UpperEdgeDigital[cbConfiguration.SelectedIndex][i].ToString();
+                tbcwl.Text = Settings.LowerEdgeCW[Settings.Configuration][i].ToString();
+                tbcwu.Text = Settings.UpperEdgeCW[Settings.Configuration][i].ToString();
+                tbphl.Text = Settings.LowerEdgePhone[Settings.Configuration][i].ToString();
+                tbphu.Text = Settings.UpperEdgePhone[Settings.Configuration][i].ToString();
+                tbdgl.Text = Settings.LowerEdgeDigital[Settings.Configuration][i].ToString();
+                tbdgu.Text = Settings.UpperEdgeDigital[Settings.Configuration][i].ToString();
             }
+
+            // Do this last since it triggers a callback
+            cbConfiguration.SelectedIndex = Settings.Configuration;
         }
 
         private bool parseEntries()
@@ -97,20 +102,20 @@ namespace DXLog.net
         {
             if (parseEntries())
             {
-                Config.Save("WaterfallConfiguration", Settings.Configuration + 1);
+                Config.Save("RCWaterfallConfiguration", ((char)(cbConfiguration.SelectedIndex + 'A')).ToString());
 
                 for (int cn = 0; cn < Settings.Configs; cn++)
                 {
                     char cl = (char)('A' + (char)cn);
-                    Config.Save("WaterfallEdgeSet" + cl, Settings.EdgeSet[cn]);
-                    Config.Save("WaterfallScrolling" + cl, Settings.Scrolling[cn]);
+                    Config.Save("RCWaterfallEdgeSet" + cl, Settings.EdgeSet[cn]);
+                    Config.Save("RCWaterfallScrolling" + cl, Settings.Scrolling[cn]);
 
-                    Config.Save("WaterfallLowerEdgeCW" + cl, string.Join(";", Settings.LowerEdgeCW[cn].Select(j => j.ToString()).ToArray()));
-                    Config.Save("WaterfallUpperEdgeCW" + cl, string.Join(";", Settings.UpperEdgeCW[cn].Select(j => j.ToString()).ToArray()));
-                    Config.Save("WaterfallLowerEdgePhone" + cl, string.Join(";", Settings.LowerEdgePhone[cn].Select(j => j.ToString()).ToArray()));
-                    Config.Save("WaterfallUpperEdgePhone" + cl, string.Join(";", Settings.UpperEdgePhone[cn].Select(j => j.ToString()).ToArray()));
-                    Config.Save("WaterfallLowerEdgeDigital" + cl, string.Join(";", Settings.LowerEdgeDigital[cn].Select(j => j.ToString()).ToArray()));
-                    Config.Save("WaterfallUpperEdgeDigital" + cl, string.Join(";", Settings.UpperEdgeDigital[cn].Select(j => j.ToString()).ToArray()));
+                    Config.Save("RCWaterfallLowerEdgeCW" + cl, string.Join(";", Settings.LowerEdgeCW[cn].Select(j => j.ToString()).ToArray()));
+                    Config.Save("RCWaterfallUpperEdgeCW" + cl, string.Join(";", Settings.UpperEdgeCW[cn].Select(j => j.ToString()).ToArray()));
+                    Config.Save("RCWaterfallLowerEdgePhone" + cl, string.Join(";", Settings.LowerEdgePhone[cn].Select(j => j.ToString()).ToArray()));
+                    Config.Save("RCWaterfallUpperEdgePhone" + cl, string.Join(";", Settings.UpperEdgePhone[cn].Select(j => j.ToString()).ToArray()));
+                    Config.Save("RCWaterfallLowerEdgeDigital" + cl, string.Join(";", Settings.LowerEdgeDigital[cn].Select(j => j.ToString()).ToArray()));
+                    Config.Save("RCWaterfallUpperEdgeDigital" + cl, string.Join(";", Settings.UpperEdgeDigital[cn].Select(j => j.ToString()).ToArray()));
                 }
 
                 DialogResult = DialogResult.OK;
@@ -148,7 +153,7 @@ namespace DXLog.net
 
         private void cbConfiguration_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tbcwl0.Text != "" && parseEntries())
+            if (parseEntries())
             {
                 Settings.Configuration = cbConfiguration.SelectedIndex;
                 refreshTable();

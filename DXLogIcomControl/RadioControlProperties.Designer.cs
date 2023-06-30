@@ -1,7 +1,7 @@
 ﻿
 namespace DXLog.net
 {
-    partial class IcomProperties
+    partial class RadioControlProperties
     {
         /// <summary>
         /// Required designer variable.

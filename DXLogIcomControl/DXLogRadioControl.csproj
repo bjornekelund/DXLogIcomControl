@@ -56,26 +56,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DXLogIcomControl.cs">
+    <Compile Include="DXLogRadioControl.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DXLogIcomControl.Designer.cs">
-      <DependentUpon>DXLogIcomControl.cs</DependentUpon>
+    <Compile Include="DXLogRadioControl.Designer.cs">
+      <DependentUpon>DXLogRadioControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="IcomProperties.cs">
+    <Compile Include="RadioControlProperties.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="IcomProperties.Designer.cs">
-      <DependentUpon>IcomProperties.cs</DependentUpon>
+    <Compile Include="RadioControlProperties.Designer.cs">
+      <DependentUpon>RadioControlProperties.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DXLogIcomControl.resx">
-      <DependentUpon>DXLogIcomControl.cs</DependentUpon>
+    <EmbeddedResource Include="DXLogRadioControl.resx">
+      <DependentUpon>DXLogRadioControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="IcomProperties.resx">
-      <DependentUpon>IcomProperties.cs</DependentUpon>
+    <EmbeddedResource Include="RadioControlProperties.resx">
+      <DependentUpon>RadioControlProperties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
