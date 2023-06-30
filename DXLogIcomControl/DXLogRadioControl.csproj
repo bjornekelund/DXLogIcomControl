@@ -8,8 +8,8 @@
     <ProjectGuid>{01023136-F8B0-4150-B8AA-D991FE60FF90}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DXLogIcomControl</RootNamespace>
-    <AssemblyName>DXLogIcomControl</AssemblyName>
+    <RootNamespace>DXLogRadioControl</RootNamespace>
+    <AssemblyName>DXLogRadioControl</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
