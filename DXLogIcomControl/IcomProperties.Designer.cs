@@ -29,8 +29,8 @@ namespace DXLog.net
         /// </summary>
         private void InitializeComponent()
         {
-            this.useScrollModeCheckBox = new System.Windows.Forms.CheckBox();
-            this.edgeSelectionDropDown = new System.Windows.Forms.ComboBox();
+            this.chkUseScrollMode = new System.Windows.Forms.CheckBox();
+            this.cbEdgeSelection = new System.Windows.Forms.ComboBox();
             this.tbcwl0 = new System.Windows.Forms.TextBox();
             this.tbcwl6 = new System.Windows.Forms.TextBox();
             this.tbcwu6 = new System.Windows.Forms.TextBox();
@@ -65,7 +65,19 @@ namespace DXLog.net
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.tbcwu13 = new System.Windows.Forms.TextBox();
+            this.tbcwu12 = new System.Windows.Forms.TextBox();
+            this.tbcwu11 = new System.Windows.Forms.TextBox();
+            this.tbcwl13 = new System.Windows.Forms.TextBox();
+            this.tbcwl12 = new System.Windows.Forms.TextBox();
+            this.tbcwl11 = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.tbphl12 = new System.Windows.Forms.TextBox();
+            this.tbphl13 = new System.Windows.Forms.TextBox();
+            this.tbphu13 = new System.Windows.Forms.TextBox();
+            this.tbphu12 = new System.Windows.Forms.TextBox();
+            this.tbphl11 = new System.Windows.Forms.TextBox();
+            this.tbphu11 = new System.Windows.Forms.TextBox();
             this.tbphu0 = new System.Windows.Forms.TextBox();
             this.tbphl0 = new System.Windows.Forms.TextBox();
             this.tbphl6 = new System.Windows.Forms.TextBox();
@@ -89,6 +101,12 @@ namespace DXLog.net
             this.tbphl9 = new System.Windows.Forms.TextBox();
             this.tbphu9 = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.tbdgu13 = new System.Windows.Forms.TextBox();
+            this.tbdgl13 = new System.Windows.Forms.TextBox();
+            this.tbdgu12 = new System.Windows.Forms.TextBox();
+            this.tbdgl12 = new System.Windows.Forms.TextBox();
+            this.tbdgu11 = new System.Windows.Forms.TextBox();
+            this.tbdgl11 = new System.Windows.Forms.TextBox();
             this.tbdgu0 = new System.Windows.Forms.TextBox();
             this.tbdgl0 = new System.Windows.Forms.TextBox();
             this.tbdgl6 = new System.Windows.Forms.TextBox();
@@ -114,50 +132,33 @@ namespace DXLog.net
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
-            this.tbcwl11 = new System.Windows.Forms.TextBox();
-            this.tbcwl12 = new System.Windows.Forms.TextBox();
-            this.tbcwl13 = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.tbphu12 = new System.Windows.Forms.TextBox();
-            this.tbphl11 = new System.Windows.Forms.TextBox();
-            this.tbphu11 = new System.Windows.Forms.TextBox();
-            this.tbdgu12 = new System.Windows.Forms.TextBox();
-            this.tbdgl12 = new System.Windows.Forms.TextBox();
-            this.tbdgu11 = new System.Windows.Forms.TextBox();
-            this.tbdgl11 = new System.Windows.Forms.TextBox();
-            this.tbphu13 = new System.Windows.Forms.TextBox();
-            this.tbphl13 = new System.Windows.Forms.TextBox();
-            this.tbphl12 = new System.Windows.Forms.TextBox();
-            this.tbcwu13 = new System.Windows.Forms.TextBox();
-            this.tbcwu12 = new System.Windows.Forms.TextBox();
-            this.tbcwu11 = new System.Windows.Forms.TextBox();
-            this.tbdgu13 = new System.Windows.Forms.TextBox();
-            this.tbdgl13 = new System.Windows.Forms.TextBox();
             this.btnDefaults = new System.Windows.Forms.Button();
+            this.cbConfiguration = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
-            // useScrollModeCheckBox
+            // chkUuseScrollMode
             // 
-            this.useScrollModeCheckBox.AutoSize = true;
-            this.useScrollModeCheckBox.Location = new System.Drawing.Point(126, 409);
-            this.useScrollModeCheckBox.Name = "useScrollModeCheckBox";
-            this.useScrollModeCheckBox.Size = new System.Drawing.Size(108, 17);
-            this.useScrollModeCheckBox.TabIndex = 88;
-            this.useScrollModeCheckBox.Text = "Scrolling waterfall";
-            this.useScrollModeCheckBox.UseVisualStyleBackColor = true;
+            this.chkUseScrollMode.AutoSize = true;
+            this.chkUseScrollMode.Location = new System.Drawing.Point(126, 435);
+            this.chkUseScrollMode.Name = "chkUuseScrollMode";
+            this.chkUseScrollMode.Size = new System.Drawing.Size(108, 17);
+            this.chkUseScrollMode.TabIndex = 88;
+            this.chkUseScrollMode.Text = "Scrolling waterfall";
+            this.chkUseScrollMode.UseVisualStyleBackColor = true;
             // 
-            // edgeSelectionDropDown
+            // cbEdgeSelection
             // 
-            this.edgeSelectionDropDown.FormattingEnabled = true;
-            this.edgeSelectionDropDown.Location = new System.Drawing.Point(77, 407);
-            this.edgeSelectionDropDown.Name = "edgeSelectionDropDown";
-            this.edgeSelectionDropDown.Size = new System.Drawing.Size(40, 21);
-            this.edgeSelectionDropDown.TabIndex = 87;
+            this.cbEdgeSelection.FormattingEnabled = true;
+            this.cbEdgeSelection.Location = new System.Drawing.Point(77, 433);
+            this.cbEdgeSelection.Name = "cbEdgeSelection";
+            this.cbEdgeSelection.Size = new System.Drawing.Size(40, 21);
+            this.cbEdgeSelection.TabIndex = 87;
             // 
             // tbcwl0
             // 
@@ -316,7 +317,7 @@ namespace DXLog.net
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 34);
+            this.label1.Location = new System.Drawing.Point(10, 60);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(33, 13);
             this.label1.TabIndex = 26;
@@ -325,7 +326,7 @@ namespace DXLog.net
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 60);
+            this.label2.Location = new System.Drawing.Point(10, 86);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(27, 13);
             this.label2.TabIndex = 27;
@@ -334,7 +335,7 @@ namespace DXLog.net
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 86);
+            this.label3.Location = new System.Drawing.Point(10, 112);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(27, 13);
             this.label3.TabIndex = 28;
@@ -343,7 +344,7 @@ namespace DXLog.net
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 293);
+            this.label4.Location = new System.Drawing.Point(10, 319);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(21, 13);
             this.label4.TabIndex = 29;
@@ -352,7 +353,7 @@ namespace DXLog.net
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(10, 267);
+            this.label5.Location = new System.Drawing.Point(10, 293);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(27, 13);
             this.label5.TabIndex = 30;
@@ -361,7 +362,7 @@ namespace DXLog.net
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(10, 215);
+            this.label6.Location = new System.Drawing.Point(10, 241);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(27, 13);
             this.label6.TabIndex = 31;
@@ -370,7 +371,7 @@ namespace DXLog.net
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(10, 190);
+            this.label7.Location = new System.Drawing.Point(10, 216);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(27, 13);
             this.label7.TabIndex = 32;
@@ -379,7 +380,7 @@ namespace DXLog.net
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(10, 164);
+            this.label8.Location = new System.Drawing.Point(10, 190);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(27, 13);
             this.label8.TabIndex = 33;
@@ -388,7 +389,7 @@ namespace DXLog.net
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(10, 138);
+            this.label9.Location = new System.Drawing.Point(10, 164);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(27, 13);
             this.label9.TabIndex = 34;
@@ -397,7 +398,7 @@ namespace DXLog.net
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(10, 241);
+            this.label10.Location = new System.Drawing.Point(10, 267);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(27, 13);
             this.label10.TabIndex = 35;
@@ -406,7 +407,7 @@ namespace DXLog.net
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(10, 112);
+            this.label11.Location = new System.Drawing.Point(10, 138);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(27, 13);
             this.label11.TabIndex = 36;
@@ -442,12 +443,54 @@ namespace DXLog.net
             this.groupBox1.Controls.Add(this.tbcwu8);
             this.groupBox1.Controls.Add(this.tbcwl9);
             this.groupBox1.Controls.Add(this.tbcwu9);
-            this.groupBox1.Location = new System.Drawing.Point(49, 12);
+            this.groupBox1.Location = new System.Drawing.Point(49, 38);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(146, 384);
             this.groupBox1.TabIndex = 41;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "CW";
+            // 
+            // tbcwu13
+            // 
+            this.tbcwu13.Location = new System.Drawing.Point(74, 354);
+            this.tbcwu13.Name = "tbcwu13";
+            this.tbcwu13.Size = new System.Drawing.Size(60, 20);
+            this.tbcwu13.TabIndex = 28;
+            // 
+            // tbcwu12
+            // 
+            this.tbcwu12.Location = new System.Drawing.Point(74, 328);
+            this.tbcwu12.Name = "tbcwu12";
+            this.tbcwu12.Size = new System.Drawing.Size(60, 20);
+            this.tbcwu12.TabIndex = 26;
+            // 
+            // tbcwu11
+            // 
+            this.tbcwu11.Location = new System.Drawing.Point(74, 302);
+            this.tbcwu11.Name = "tbcwu11";
+            this.tbcwu11.Size = new System.Drawing.Size(60, 20);
+            this.tbcwu11.TabIndex = 24;
+            // 
+            // tbcwl13
+            // 
+            this.tbcwl13.Location = new System.Drawing.Point(8, 354);
+            this.tbcwl13.Name = "tbcwl13";
+            this.tbcwl13.Size = new System.Drawing.Size(60, 20);
+            this.tbcwl13.TabIndex = 27;
+            // 
+            // tbcwl12
+            // 
+            this.tbcwl12.Location = new System.Drawing.Point(8, 328);
+            this.tbcwl12.Name = "tbcwl12";
+            this.tbcwl12.Size = new System.Drawing.Size(60, 20);
+            this.tbcwl12.TabIndex = 25;
+            // 
+            // tbcwl11
+            // 
+            this.tbcwl11.Location = new System.Drawing.Point(8, 302);
+            this.tbcwl11.Name = "tbcwl11";
+            this.tbcwl11.Size = new System.Drawing.Size(60, 20);
+            this.tbcwl11.TabIndex = 23;
             // 
             // groupBox2
             // 
@@ -479,12 +522,54 @@ namespace DXLog.net
             this.groupBox2.Controls.Add(this.tbphu8);
             this.groupBox2.Controls.Add(this.tbphl9);
             this.groupBox2.Controls.Add(this.tbphu9);
-            this.groupBox2.Location = new System.Drawing.Point(201, 12);
+            this.groupBox2.Location = new System.Drawing.Point(201, 38);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(144, 384);
             this.groupBox2.TabIndex = 42;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Phone";
+            // 
+            // tbphl12
+            // 
+            this.tbphl12.Location = new System.Drawing.Point(8, 328);
+            this.tbphl12.Name = "tbphl12";
+            this.tbphl12.Size = new System.Drawing.Size(60, 20);
+            this.tbphl12.TabIndex = 53;
+            // 
+            // tbphl13
+            // 
+            this.tbphl13.Location = new System.Drawing.Point(8, 354);
+            this.tbphl13.Name = "tbphl13";
+            this.tbphl13.Size = new System.Drawing.Size(60, 20);
+            this.tbphl13.TabIndex = 55;
+            // 
+            // tbphu13
+            // 
+            this.tbphu13.Location = new System.Drawing.Point(74, 354);
+            this.tbphu13.Name = "tbphu13";
+            this.tbphu13.Size = new System.Drawing.Size(60, 20);
+            this.tbphu13.TabIndex = 56;
+            // 
+            // tbphu12
+            // 
+            this.tbphu12.Location = new System.Drawing.Point(74, 328);
+            this.tbphu12.Name = "tbphu12";
+            this.tbphu12.Size = new System.Drawing.Size(60, 20);
+            this.tbphu12.TabIndex = 54;
+            // 
+            // tbphl11
+            // 
+            this.tbphl11.Location = new System.Drawing.Point(8, 302);
+            this.tbphl11.Name = "tbphl11";
+            this.tbphl11.Size = new System.Drawing.Size(60, 20);
+            this.tbphl11.TabIndex = 51;
+            // 
+            // tbphu11
+            // 
+            this.tbphu11.Location = new System.Drawing.Point(74, 302);
+            this.tbphu11.Name = "tbphu11";
+            this.tbphu11.Size = new System.Drawing.Size(60, 20);
+            this.tbphu11.TabIndex = 52;
             // 
             // tbphu0
             // 
@@ -670,12 +755,54 @@ namespace DXLog.net
             this.groupBox3.Controls.Add(this.tbdgu8);
             this.groupBox3.Controls.Add(this.tbdgl9);
             this.groupBox3.Controls.Add(this.tbdgu9);
-            this.groupBox3.Location = new System.Drawing.Point(352, 12);
+            this.groupBox3.Location = new System.Drawing.Point(352, 38);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(141, 384);
             this.groupBox3.TabIndex = 43;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Digital";
+            // 
+            // tbdgu13
+            // 
+            this.tbdgu13.Location = new System.Drawing.Point(74, 354);
+            this.tbdgu13.Name = "tbdgu13";
+            this.tbdgu13.Size = new System.Drawing.Size(60, 20);
+            this.tbdgu13.TabIndex = 86;
+            // 
+            // tbdgl13
+            // 
+            this.tbdgl13.Location = new System.Drawing.Point(8, 354);
+            this.tbdgl13.Name = "tbdgl13";
+            this.tbdgl13.Size = new System.Drawing.Size(60, 20);
+            this.tbdgl13.TabIndex = 85;
+            // 
+            // tbdgu12
+            // 
+            this.tbdgu12.Location = new System.Drawing.Point(74, 328);
+            this.tbdgu12.Name = "tbdgu12";
+            this.tbdgu12.Size = new System.Drawing.Size(60, 20);
+            this.tbdgu12.TabIndex = 84;
+            // 
+            // tbdgl12
+            // 
+            this.tbdgl12.Location = new System.Drawing.Point(8, 328);
+            this.tbdgl12.Name = "tbdgl12";
+            this.tbdgl12.Size = new System.Drawing.Size(60, 20);
+            this.tbdgl12.TabIndex = 81;
+            // 
+            // tbdgu11
+            // 
+            this.tbdgu11.Location = new System.Drawing.Point(74, 302);
+            this.tbdgu11.Name = "tbdgu11";
+            this.tbdgu11.Size = new System.Drawing.Size(60, 20);
+            this.tbdgu11.TabIndex = 80;
+            // 
+            // tbdgl11
+            // 
+            this.tbdgl11.Location = new System.Drawing.Point(8, 302);
+            this.tbdgl11.Name = "tbdgl11";
+            this.tbdgl11.Size = new System.Drawing.Size(60, 20);
+            this.tbdgl11.TabIndex = 79;
             // 
             // tbdgu0
             // 
@@ -833,7 +960,7 @@ namespace DXLog.net
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(415, 406);
+            this.btnOK.Location = new System.Drawing.Point(415, 432);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 91;
@@ -844,7 +971,7 @@ namespace DXLog.net
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(334, 406);
+            this.btnCancel.Location = new System.Drawing.Point(334, 432);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 90;
@@ -855,37 +982,16 @@ namespace DXLog.net
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(17, 412);
+            this.label12.Location = new System.Drawing.Point(17, 438);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(59, 13);
             this.label12.TabIndex = 46;
             this.label12.Text = "Edge set #";
             // 
-            // tbcwl11
-            // 
-            this.tbcwl11.Location = new System.Drawing.Point(8, 302);
-            this.tbcwl11.Name = "tbcwl11";
-            this.tbcwl11.Size = new System.Drawing.Size(60, 20);
-            this.tbcwl11.TabIndex = 23;
-            // 
-            // tbcwl12
-            // 
-            this.tbcwl12.Location = new System.Drawing.Point(8, 328);
-            this.tbcwl12.Name = "tbcwl12";
-            this.tbcwl12.Size = new System.Drawing.Size(60, 20);
-            this.tbcwl12.TabIndex = 25;
-            // 
-            // tbcwl13
-            // 
-            this.tbcwl13.Location = new System.Drawing.Point(8, 354);
-            this.tbcwl13.Name = "tbcwl13";
-            this.tbcwl13.Size = new System.Drawing.Size(60, 20);
-            this.tbcwl13.TabIndex = 27;
-            // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(10, 317);
+            this.label13.Location = new System.Drawing.Point(10, 343);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(21, 13);
             this.label13.TabIndex = 47;
@@ -894,7 +1000,7 @@ namespace DXLog.net
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(10, 343);
+            this.label14.Location = new System.Drawing.Point(10, 369);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(21, 13);
             this.label14.TabIndex = 48;
@@ -903,120 +1009,15 @@ namespace DXLog.net
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(10, 369);
+            this.label15.Location = new System.Drawing.Point(10, 395);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(33, 13);
             this.label15.TabIndex = 49;
             this.label15.Text = "70cm";
             // 
-            // tbphu12
-            // 
-            this.tbphu12.Location = new System.Drawing.Point(74, 328);
-            this.tbphu12.Name = "tbphu12";
-            this.tbphu12.Size = new System.Drawing.Size(60, 20);
-            this.tbphu12.TabIndex = 54;
-            // 
-            // tbphl11
-            // 
-            this.tbphl11.Location = new System.Drawing.Point(8, 302);
-            this.tbphl11.Name = "tbphl11";
-            this.tbphl11.Size = new System.Drawing.Size(60, 20);
-            this.tbphl11.TabIndex = 51;
-            // 
-            // tbphu11
-            // 
-            this.tbphu11.Location = new System.Drawing.Point(74, 302);
-            this.tbphu11.Name = "tbphu11";
-            this.tbphu11.Size = new System.Drawing.Size(60, 20);
-            this.tbphu11.TabIndex = 52;
-            // 
-            // tbdgu12
-            // 
-            this.tbdgu12.Location = new System.Drawing.Point(74, 328);
-            this.tbdgu12.Name = "tbdgu12";
-            this.tbdgu12.Size = new System.Drawing.Size(60, 20);
-            this.tbdgu12.TabIndex = 84;
-            // 
-            // tbdgl12
-            // 
-            this.tbdgl12.Location = new System.Drawing.Point(8, 328);
-            this.tbdgl12.Name = "tbdgl12";
-            this.tbdgl12.Size = new System.Drawing.Size(60, 20);
-            this.tbdgl12.TabIndex = 81;
-            // 
-            // tbdgu11
-            // 
-            this.tbdgu11.Location = new System.Drawing.Point(74, 302);
-            this.tbdgu11.Name = "tbdgu11";
-            this.tbdgu11.Size = new System.Drawing.Size(60, 20);
-            this.tbdgu11.TabIndex = 80;
-            // 
-            // tbdgl11
-            // 
-            this.tbdgl11.Location = new System.Drawing.Point(8, 302);
-            this.tbdgl11.Name = "tbdgl11";
-            this.tbdgl11.Size = new System.Drawing.Size(60, 20);
-            this.tbdgl11.TabIndex = 79;
-            // 
-            // tbphu13
-            // 
-            this.tbphu13.Location = new System.Drawing.Point(74, 354);
-            this.tbphu13.Name = "tbphu13";
-            this.tbphu13.Size = new System.Drawing.Size(60, 20);
-            this.tbphu13.TabIndex = 56;
-            // 
-            // tbphl13
-            // 
-            this.tbphl13.Location = new System.Drawing.Point(8, 354);
-            this.tbphl13.Name = "tbphl13";
-            this.tbphl13.Size = new System.Drawing.Size(60, 20);
-            this.tbphl13.TabIndex = 55;
-            // 
-            // tbphl12
-            // 
-            this.tbphl12.Location = new System.Drawing.Point(8, 328);
-            this.tbphl12.Name = "tbphl12";
-            this.tbphl12.Size = new System.Drawing.Size(60, 20);
-            this.tbphl12.TabIndex = 53;
-            // 
-            // tbcwu13
-            // 
-            this.tbcwu13.Location = new System.Drawing.Point(74, 354);
-            this.tbcwu13.Name = "tbcwu13";
-            this.tbcwu13.Size = new System.Drawing.Size(60, 20);
-            this.tbcwu13.TabIndex = 28;
-            // 
-            // tbcwu12
-            // 
-            this.tbcwu12.Location = new System.Drawing.Point(74, 328);
-            this.tbcwu12.Name = "tbcwu12";
-            this.tbcwu12.Size = new System.Drawing.Size(60, 20);
-            this.tbcwu12.TabIndex = 26;
-            // 
-            // tbcwu11
-            // 
-            this.tbcwu11.Location = new System.Drawing.Point(74, 302);
-            this.tbcwu11.Name = "tbcwu11";
-            this.tbcwu11.Size = new System.Drawing.Size(60, 20);
-            this.tbcwu11.TabIndex = 24;
-            // 
-            // tbdgu13
-            // 
-            this.tbdgu13.Location = new System.Drawing.Point(74, 354);
-            this.tbdgu13.Name = "tbdgu13";
-            this.tbdgu13.Size = new System.Drawing.Size(60, 20);
-            this.tbdgu13.TabIndex = 86;
-            // 
-            // tbdgl13
-            // 
-            this.tbdgl13.Location = new System.Drawing.Point(8, 354);
-            this.tbdgl13.Name = "tbdgl13";
-            this.tbdgl13.Size = new System.Drawing.Size(60, 20);
-            this.tbdgl13.TabIndex = 85;
-            // 
             // btnDefaults
             // 
-            this.btnDefaults.Location = new System.Drawing.Point(241, 406);
+            this.btnDefaults.Location = new System.Drawing.Point(241, 432);
             this.btnDefaults.Name = "btnDefaults";
             this.btnDefaults.Size = new System.Drawing.Size(75, 23);
             this.btnDefaults.TabIndex = 89;
@@ -1024,13 +1025,23 @@ namespace DXLog.net
             this.btnDefaults.UseVisualStyleBackColor = true;
             this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
             // 
+            // cbConfiguration
+            // 
+            this.cbConfiguration.FormattingEnabled = true;
+            this.cbConfiguration.Location = new System.Drawing.Point(57, 12);
+            this.cbConfiguration.Name = "cbConfiguration";
+            this.cbConfiguration.Size = new System.Drawing.Size(109, 21);
+            this.cbConfiguration.TabIndex = 92;
+            this.cbConfiguration.SelectedIndexChanged += new System.EventHandler(this.cbConfiguration_SelectedIndexChanged);
+            // 
             // IcomProperties
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(505, 436);
+            this.ClientSize = new System.Drawing.Size(505, 471);
+            this.Controls.Add(this.cbConfiguration);
             this.Controls.Add(this.btnDefaults);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label14);
@@ -1052,8 +1063,8 @@ namespace DXLog.net
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.edgeSelectionDropDown);
-            this.Controls.Add(this.useScrollModeCheckBox);
+            this.Controls.Add(this.cbEdgeSelection);
+            this.Controls.Add(this.chkUseScrollMode);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -1075,8 +1086,8 @@ namespace DXLog.net
 
         #endregion
 
-        private System.Windows.Forms.CheckBox useScrollModeCheckBox;
-        private System.Windows.Forms.ComboBox edgeSelectionDropDown;
+        private System.Windows.Forms.CheckBox chkUseScrollMode;
+        private System.Windows.Forms.ComboBox cbEdgeSelection;
         private System.Windows.Forms.TextBox tbcwl0;
         private System.Windows.Forms.TextBox tbcwl6;
         private System.Windows.Forms.TextBox tbcwu6;
@@ -1182,5 +1193,6 @@ namespace DXLog.net
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button btnDefaults;
+        private System.Windows.Forms.ComboBox cbConfiguration;
     }
 }
