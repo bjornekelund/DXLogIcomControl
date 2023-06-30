@@ -39,7 +39,7 @@
     </Reference>
     <Reference Include="IOComm, Version=2.5.0.26601, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DXLog.net\IOComm.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\DXLog.net\IOComm.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,7 +52,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Utilities, Version=2.5.0.26600, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DXLog.net\Utilities.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\DXLog.net\Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
