@@ -11,7 +11,7 @@ namespace DXLog.net
     {
         public static string CusWinName
         {
-            get { return "Radio controller"; }
+            get { return "Radio 1 control"; }
         }
 
         public static int CusFormID
@@ -86,7 +86,7 @@ namespace DXLog.net
             set
             {
                 _radioNumber = value;
-                Text = string.Format("Radio {0} controller", _radioNumber);
+                Text = string.Format("Radio {0} control", _radioNumber);
             }
         }
 
