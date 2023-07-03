@@ -7,7 +7,7 @@ using IOComm;
 
 namespace DXLog.net
 {
-    public partial class FrmRadioControl : KForm
+    public partial class FrmRadioControl1 : KForm
     {
         public static string CusWinName
         {
@@ -90,12 +90,12 @@ namespace DXLog.net
             }
         }
 
-        public FrmRadioControl()
+        public FrmRadioControl1()
         {
             InitializeComponent();
         }
 
-        public FrmRadioControl(ContestData contestdata)
+        public FrmRadioControl1(ContestData contestdata)
         {
             InitializeComponent();
             RadioNumber = 1;
@@ -277,6 +277,8 @@ namespace DXLog.net
                 }
             }
 
+            Settings.RadioModel = _mainform.COMMainProvider.RadioObject(RadioNumber).GetType().GetField("RadioID").GetValue(null).ToString();
+
             UpdateRadio(_radioNumber);
         }
 
@@ -322,6 +324,7 @@ namespace DXLog.net
             }
             //label1.Text = string.Format("rn={0} sr={1} MHz={2} Md={3}", radionumber, _selradio, CurrentMHz, CurrentMode);
 
+            Settings.RadioModel = _mainform.COMMainProvider.RadioObject(RadioNumber).GetType().GetField("RadioID").GetValue(null).ToString();
             Radio = _mainform.COMMainProvider.RadioObject(_physicalRadio);
 
             if (Radio == null)
@@ -637,6 +640,7 @@ namespace DXLog.net
     public class RadioSettings
     {
         public int Configuration = 0;
+        public string RadioModel;
         public readonly int Configs = 4;
         public readonly int Bands = 14;
 

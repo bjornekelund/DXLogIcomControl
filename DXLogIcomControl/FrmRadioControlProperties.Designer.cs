@@ -137,16 +137,17 @@ namespace DXLog.net
             this.label15 = new System.Windows.Forms.Label();
             this.btnDefaults = new System.Windows.Forms.Button();
             this.cbConfiguration = new System.Windows.Forms.ComboBox();
+            this.lbRadioName = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
-            // chkUuseScrollMode
+            // chkUseScrollMode
             // 
             this.chkUseScrollMode.AutoSize = true;
             this.chkUseScrollMode.Location = new System.Drawing.Point(126, 435);
-            this.chkUseScrollMode.Name = "chkUuseScrollMode";
+            this.chkUseScrollMode.Name = "chkUseScrollMode";
             this.chkUseScrollMode.Size = new System.Drawing.Size(108, 17);
             this.chkUseScrollMode.TabIndex = 88;
             this.chkUseScrollMode.Text = "Scrolling waterfall";
@@ -1028,19 +1029,29 @@ namespace DXLog.net
             // cbConfiguration
             // 
             this.cbConfiguration.FormattingEnabled = true;
-            this.cbConfiguration.Location = new System.Drawing.Point(57, 12);
+            this.cbConfiguration.Location = new System.Drawing.Point(49, 11);
             this.cbConfiguration.Name = "cbConfiguration";
             this.cbConfiguration.Size = new System.Drawing.Size(109, 21);
             this.cbConfiguration.TabIndex = 92;
             this.cbConfiguration.SelectedIndexChanged += new System.EventHandler(this.cbConfiguration_SelectedIndexChanged);
             // 
-            // IcomProperties
+            // lbRadioName
+            // 
+            this.lbRadioName.Location = new System.Drawing.Point(293, 14);
+            this.lbRadioName.Name = "lbRadioName";
+            this.lbRadioName.Size = new System.Drawing.Size(193, 18);
+            this.lbRadioName.TabIndex = 93;
+            this.lbRadioName.Text = "ICOM IC-7610";
+            this.lbRadioName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // FrmRadioControlProperties
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(505, 471);
+            this.Controls.Add(this.lbRadioName);
             this.Controls.Add(this.cbConfiguration);
             this.Controls.Add(this.btnDefaults);
             this.Controls.Add(this.label15);
@@ -1068,7 +1079,7 @@ namespace DXLog.net
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "IcomProperties";
+            this.Name = "FrmRadioControlProperties";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "ICOM controller properties";
@@ -1194,5 +1205,6 @@ namespace DXLog.net
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button btnDefaults;
         private System.Windows.Forms.ComboBox cbConfiguration;
+        private System.Windows.Forms.Label lbRadioName;
     }
 }

@@ -36,6 +36,8 @@ namespace DXLog.net
             cbEdgeSelection.Enabled = Settings.HasEdgeControl;
             chkUseScrollMode.Enabled = Settings.HasScroll;
 
+            lbRadioName.Text = Settings.RadioModel;
+
             refreshTable();
         }
 
