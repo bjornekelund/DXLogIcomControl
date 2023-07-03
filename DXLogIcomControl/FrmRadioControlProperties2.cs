@@ -6,16 +6,16 @@ using ConfigFile;
 
 namespace DXLog.net
 {
-    public partial class FrmRadioControlProperties : Form
+    public partial class FrmRadioControlProperties2 : Form
     {
         public RadioSettings Settings; // Why is this public not visible from DXLogIcomControl?
 
-        public FrmRadioControlProperties()
+        public FrmRadioControlProperties2()
         {
             InitializeComponent();
         }
 
-        public FrmRadioControlProperties(RadioSettings sett)
+        public FrmRadioControlProperties2(RadioSettings sett)
         {
             InitializeComponent();
 
@@ -28,7 +28,7 @@ namespace DXLog.net
                 cbEdgeSelection.Items.Add(i.ToString());
             }
 
-            for (char letter = 'A'; letter < 'A' + Settings.Configs; letter++)
+            for (char letter = 'A'; letter < 'A' + RadioSettings.Configs; letter++)
             {
                 cbConfiguration.Items.Add("Configuration " + letter);
             }
@@ -38,32 +38,31 @@ namespace DXLog.net
 
             lbRadioName.Text = Settings.RadioModelName;
 
-            switch (Settings.RadioType)
+            switch (Settings.RadioModel)
             {
-                case RadioTypeType.IC705:
+                case RadioType.IC905:
                     break;
-                case RadioTypeType.IC7610:
-                case RadioTypeType.IC7851:
-                    tbcwl11.Enabled = false;
-                    tbcwu11.Enabled = false;
-                    tbphl11.Enabled = false;
-                    tbphu11.Enabled = false;
-                    tbdgl11.Enabled = false;
-                    tbdgu11.Enabled = false;
-                    break;
-                case RadioTypeType.IC7300:
-                    tbcwl12.Enabled = false;
-                    tbcwu12.Enabled = false;
-                    tbphl12.Enabled = false;
-                    tbphu12.Enabled = false;
-                    tbdgl12.Enabled = false;
-                    tbdgu12.Enabled = false;
-                    tbcwl13.Enabled = false;
-                    tbcwu13.Enabled = false;
-                    tbphl13.Enabled = false;
-                    tbphu13.Enabled = false;
-                    tbdgl13.Enabled = false;
-                    tbdgu13.Enabled = false;
+                case RadioType.IC9700:
+                    tbcwl3.Enabled = false; // 4m
+                    tbcwu3.Enabled = false;
+                    tbphl3.Enabled = false;
+                    tbphu3.Enabled = false;
+                    tbdgl3.Enabled = false;
+                    tbdgu3.Enabled = false;
+
+                    tbcwl4.Enabled = false; // 2m
+                    tbcwu4.Enabled = false;
+                    tbphl4.Enabled = false;
+                    tbphu4.Enabled = false;
+                    tbdgl4.Enabled = false;
+                    tbdgu4.Enabled = false;
+
+                    tbcwl5.Enabled = false; // 70cm
+                    tbcwu5.Enabled = false;
+                    tbphl5.Enabled = false;
+                    tbphu5.Enabled = false;
+                    tbdgl5.Enabled = false;
+                    tbdgu5.Enabled = false;
                     break;
             }
 
@@ -73,9 +72,9 @@ namespace DXLog.net
         private void refreshTable()
         {
             cbEdgeSelection.SelectedIndex = Settings.EdgeSet[Settings.Configuration] - 1;
-            chkUseScrollMode.Checked = Settings.Scrolling[Settings.Configuration];
+            chkUseScrollMode.Checked = Settings.UseScrolling[Settings.Configuration];
 
-            for (int i = 0; i < Settings.Bands; i++)
+            for (int i = 0; i < RadioSettings.Bands; i++)
             {
                 TextBox tbcwl = (TextBox)Controls.Find(string.Format("tbcwl{0}", i), true)[0];
                 TextBox tbcwu = (TextBox)Controls.Find(string.Format("tbcwu{0}", i), true)[0];
@@ -100,7 +99,7 @@ namespace DXLog.net
         {
             try
             {
-                for (int i = 0; i < Settings.Bands; i++)
+                for (int i = 0; i < RadioSettings.Bands; i++)
                 {
                     TextBox tbcwl = (TextBox)Controls.Find(string.Format("tbcwl{0}", i), true)[0];
                     TextBox tbcwu = (TextBox)Controls.Find(string.Format("tbcwu{0}", i), true)[0];
@@ -118,7 +117,7 @@ namespace DXLog.net
                     Settings.UpperEdgeDigital[Settings.Configuration][i] = int.Parse(tbdgu.Text);
 
                     Settings.EdgeSet[Settings.Configuration] = cbEdgeSelection.SelectedIndex + 1;
-                    Settings.Scrolling[Settings.Configuration] = chkUseScrollMode.Checked;
+                    Settings.UseScrolling[Settings.Configuration] = chkUseScrollMode.Checked;
                 }
             }
             catch
@@ -135,11 +134,11 @@ namespace DXLog.net
             {
                 Config.Save("RCWaterfallConfiguration", ((char)(cbConfiguration.SelectedIndex + 'A')).ToString());
 
-                for (int cn = 0; cn < Settings.Configs; cn++)
+                for (int cn = 0; cn < RadioSettings.Configs; cn++)
                 {
                     char cl = (char)('A' + (char)cn);
                     Config.Save("RCWaterfallEdgeSet" + cl, Settings.EdgeSet[cn]);
-                    Config.Save("RCWaterfallScrolling" + cl, Settings.Scrolling[cn]);
+                    Config.Save("RCWaterfallScrolling" + cl, Settings.UseScrolling[cn]);
 
                     Config.Save("RCWaterfallLowerEdgeCW" + cl, string.Join(";", Settings.LowerEdgeCW[cn].Select(j => j.ToString()).ToArray()));
                     Config.Save("RCWaterfallUpperEdgeCW" + cl, string.Join(";", Settings.UpperEdgeCW[cn].Select(j => j.ToString()).ToArray()));
