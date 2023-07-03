@@ -7,6 +7,11 @@ using IOComm;
 
 namespace DXLog.net
 {
+    public enum RadioTypeType
+    {
+        None, IC7610, IC7851, IC7300, IC705, IC905, IC9700, K4, FTDX101D, FTDX10
+    }
+
     public partial class FrmRadioControl1 : KForm
     {
         public static string CusWinName
@@ -68,12 +73,7 @@ namespace DXLog.net
         private string CurrentMode = string.Empty;
         private int _radioNumber = 1;
 
-        private enum RadioTypeType
-        {
-            ICOM, ICOM905, ICOM9700, Elecraft, Yaesu, None
-        }
-
-        private RadioTypeType RadioType;
+        //private RadioTypeType RadioType;
 
         CATCommon Radio = null;
 
@@ -277,7 +277,7 @@ namespace DXLog.net
                 }
             }
 
-            Settings.RadioModel = _mainform.COMMainProvider.RadioObject(RadioNumber).GetType().GetField("RadioID").GetValue(null).ToString();
+            Settings.RadioModelName = _mainform.COMMainProvider.RadioObject(RadioNumber).GetType().GetField("RadioID").GetValue(null).ToString();
 
             UpdateRadio(_radioNumber);
         }
@@ -324,23 +324,46 @@ namespace DXLog.net
             }
             //label1.Text = string.Format("rn={0} sr={1} MHz={2} Md={3}", radionumber, _selradio, CurrentMHz, CurrentMode);
 
-            Settings.RadioModel = _mainform.COMMainProvider.RadioObject(RadioNumber).GetType().GetField("RadioID").GetValue(null).ToString();
+            Settings.RadioModelName = _mainform.COMMainProvider.RadioObject(RadioNumber).GetType().GetField("RadioID").GetValue(null).ToString();
             Radio = _mainform.COMMainProvider.RadioObject(_physicalRadio);
 
             if (Radio == null)
             {
-                RadioType = RadioTypeType.None;
+                Settings.RadioType = RadioTypeType.None;
             }
             else if (Radio.IsICOM())
             {
-                // Need to figure out how to determine is radio is "regular" or IC-905 or IC-9700.
-                RadioType = RadioTypeType.ICOM;
                 Settings.HasEdgeControl = true;
                 Settings.HasScroll = true;
+
+                if (Settings.RadioModelName.Contains("7850") || Settings.RadioModelName.Contains("7851"))
+                {
+                    Settings.RadioType = RadioTypeType.IC7851;
+                }
+                else if (Settings.RadioModelName.Contains("7610"))
+                {
+                    Settings.RadioType = RadioTypeType.IC7610;
+                }
+                else if (Settings.RadioModelName.Contains("7300"))
+                {
+                    Settings.RadioType = RadioTypeType.IC7300;
+                }
+                else if (Settings.RadioModelName.Contains("705"))
+                {
+                    Settings.RadioType = RadioTypeType.IC705;
+                }   
+                else if (Settings.RadioModelName.Contains("9700"))
+                {
+                    Settings.RadioType = RadioTypeType.IC9700;
+                }
+                else if (Settings.RadioModelName.Contains("905"))
+                {
+                    Settings.RadioType = RadioTypeType.IC905;
+                }
             }
             else
             {
-                RadioType = RadioTypeType.None;
+                Settings.RadioType = RadioTypeType.None;
             }
 
             switch (CurrentMode)
@@ -477,9 +500,14 @@ namespace DXLog.net
         // Update radio with new waterfall edges
         private void UpdateRadioEdges(int lower_edge, int upper_edge)
         {
-            switch (RadioType)
+            switch (Settings.RadioType)
             {
-                case RadioTypeType.ICOM:
+                case RadioTypeType.IC7610:
+                case RadioTypeType.IC7300:
+                case RadioTypeType.IC705:
+                case RadioTypeType.IC7851:
+                case RadioTypeType.IC905:
+                case RadioTypeType.IC9700:
                     // Compose CI-V command to set waterfall edges
                     byte[] CIVSetEdges = new byte[] {
                     0x27, 0x1e,
@@ -512,9 +540,10 @@ namespace DXLog.net
                     //Radio.SendCustomCommand(CIVSetEdgeSetSub);
                     Radio.SendCustomCommand(CIVSetEdges);
                     break;
-                case RadioTypeType.Elecraft:
+                case RadioTypeType.K4:
                     break;
-                case RadioTypeType.Yaesu:
+                case RadioTypeType.FTDX10:
+                case RadioTypeType.FTDX101D:
                     break;
                 default:
                     break;
@@ -530,9 +559,14 @@ namespace DXLog.net
                 {
                     RefLevelSlider.Value = ref_level;
                     RefLevelLabel.Text = string.Format("REF: {0,3:+#;-#;0}dB", ref_level);
-                    switch (RadioType)
+                    switch (Settings.RadioType)
                     {
-                        case RadioTypeType.ICOM:
+                        case RadioTypeType.IC7610:
+                        case RadioTypeType.IC7300:
+                        case RadioTypeType.IC705:
+                        case RadioTypeType.IC7851:
+                        case RadioTypeType.IC905:
+                        case RadioTypeType.IC9700:
                             int absRefLevel = (ref_level >= 0) ? ref_level : -ref_level;
 
                             CIVSetRefLevelMain[3] = (byte)((absRefLevel / 10) * 16 + absRefLevel % 10);
@@ -551,9 +585,10 @@ namespace DXLog.net
                                 //Radio.SendCustomCommand(CIVSetRefLevelSub);
                             }
                             break;
-                        case RadioTypeType.Elecraft:
+                        case RadioTypeType.K4:
                             break;
-                        case RadioTypeType.Yaesu:
+                        case RadioTypeType.FTDX10:
+                        case RadioTypeType.FTDX101D:
                             break;
                         default:
                             break;
@@ -579,9 +614,14 @@ namespace DXLog.net
 
                     if (Settings.RefLevelControl)
                     {
-                        switch (RadioType)
+                        switch (Settings.RadioType)
                         {
-                            case RadioTypeType.ICOM:
+                            case RadioTypeType.IC7610:
+                            case RadioTypeType.IC7300:
+                            case RadioTypeType.IC705:
+                            case RadioTypeType.IC7851:
+                            case RadioTypeType.IC905:
+                            case RadioTypeType.IC9700:
                                 int icomPower = (int)(255.0f * pwr_level / 100.0f + 0.99f); // Weird ICOM mapping of percent to binary
 
                                 CIVSetPwrLevel[2] = (byte)((icomPower / 100) % 10);
@@ -595,9 +635,10 @@ namespace DXLog.net
                                     Radio.SendCustomCommand(CIVSetPwrLevel);
                                 }
                                 break;
-                            case RadioTypeType.Elecraft:
+                            case RadioTypeType.K4:
                                 break;
-                            case RadioTypeType.Yaesu:
+                            case RadioTypeType.FTDX101D:
+                            case RadioTypeType.FTDX10:
                                 break;
                             default:
                                 break;
@@ -640,7 +681,8 @@ namespace DXLog.net
     public class RadioSettings
     {
         public int Configuration = 0;
-        public string RadioModel;
+        public string RadioModelName;
+        public RadioTypeType RadioType;
         public readonly int Configs = 4;
         public readonly int Bands = 14;
 

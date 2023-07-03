@@ -36,7 +36,36 @@ namespace DXLog.net
             cbEdgeSelection.Enabled = Settings.HasEdgeControl;
             chkUseScrollMode.Enabled = Settings.HasScroll;
 
-            lbRadioName.Text = Settings.RadioModel;
+            lbRadioName.Text = Settings.RadioModelName;
+
+            switch (Settings.RadioType)
+            {
+                case RadioTypeType.IC705:
+                    break;
+                case RadioTypeType.IC7610:
+                case RadioTypeType.IC7851:
+                    tbcwl11.Enabled = false;
+                    tbcwu11.Enabled = false;
+                    tbphl11.Enabled = false;
+                    tbphu11.Enabled = false;
+                    tbdgl11.Enabled = false;
+                    tbdgu11.Enabled = false;
+                    break;
+                case RadioTypeType.IC7300:
+                    tbcwl12.Enabled = false;
+                    tbcwu12.Enabled = false;
+                    tbphl12.Enabled = false;
+                    tbphu12.Enabled = false;
+                    tbdgl12.Enabled = false;
+                    tbdgu12.Enabled = false;
+                    tbcwl13.Enabled = false;
+                    tbcwu13.Enabled = false;
+                    tbphl13.Enabled = false;
+                    tbphu13.Enabled = false;
+                    tbdgl13.Enabled = false;
+                    tbdgu13.Enabled = false;
+                    break;
+            }
 
             refreshTable();
         }
