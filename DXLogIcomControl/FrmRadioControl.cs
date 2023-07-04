@@ -342,6 +342,9 @@ namespace DXLog.net
                 }
                 else if (Settings.RadioModelName.Contains("Kenwood"))
                 {
+                    Settings.HasEdgeControl = true;
+                    Settings.HasScroll = true;
+
                     if (Settings.RadioModelName.Contains("990")) 
                     { 
                         Settings.RadioModel = RadioType.TS990; 
@@ -545,6 +548,9 @@ namespace DXLog.net
                     break;
                 case RadioType.TS890:
                 case RadioType.TS990:
+                    Radio.SendCustomCommand(Settings.UseScrolling[Settings.Configuration] ? "BS32;" : "BS31;");
+                    Radio.SendCustomCommand("BS5" + (Settings.EdgeSet[Settings.Configuration] - 1).ToString() + ";");
+
                     // TODO: Implement support for Kenwood
                     break;
                 default:
@@ -603,7 +609,9 @@ namespace DXLog.net
                             break;
                         case RadioType.TS890:
                         case RadioType.TS990:
-                            // TODO: Implement support for Kenwood
+                            int kval = 2 * ref_level + 40;
+                            string cmd2 = "BSC" + kval.ToString("000") + ";";
+                            Radio.SendCustomCommand(cmd2);
                             break;
                         default:
                             break;
