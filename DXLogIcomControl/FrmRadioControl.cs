@@ -51,6 +51,8 @@ namespace DXLog.net
 
         RadioSettings Settings = new RadioSettings();
 
+        public Dictionary<RadioType, bool> HasEdges = new Dictionary<RadioType, bool> { { RadioType.None, true } };
+
         public Dictionary<RadioType, int []> RefLevelLimits = new Dictionary<RadioType, int[]> {
             { RadioType.None,     new int [] { -20, 20 }},
             { RadioType.IC705,    new int [] { -20, 20 }},
