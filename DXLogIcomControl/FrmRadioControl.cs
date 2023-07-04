@@ -10,7 +10,7 @@ namespace DXLog.net
 {
     public enum RadioType
     {
-        None, IC7610, IC7851, IC7850, IC7300, IC705, IC905, IC9700, K4, P3, FTDX101D, FTDX10, TS890, TS990
+        None, IC7610, IC7851, IC7850, IC7300, IC705, IC905, IC9700, K4, K3P3, FTDX101D, FTDX10, TS890, TS990
     }
 
 
@@ -36,7 +36,7 @@ namespace DXLog.net
         public RadioMapType[] RadioMap = new RadioMapType [] {
             new RadioMapType { Brand = "Kenwood", Model = "890", Radio = RadioType.TS890 },
             new RadioMapType { Brand = "Kenwood", Model = "990", Radio = RadioType.TS990 },
-            new RadioMapType { Brand = "Elecraft", Model = "K3", Radio = RadioType.P3 },
+            new RadioMapType { Brand = "Elecraft", Model = "K3", Radio = RadioType.K3P3 },
             new RadioMapType { Brand = "Elecraft", Model = "K4", Radio = RadioType.K4 },
             new RadioMapType { Brand = "ICOM", Model = "7610", Radio = RadioType.IC7610 },
             new RadioMapType { Brand = "ICOM", Model = "7850", Radio = RadioType.IC7850 },
@@ -77,7 +77,7 @@ namespace DXLog.net
             { RadioType.IC7300,   new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
             { RadioType.IC7610,   new WaterFallProperties(){ MinRef = -30, MaxRef = 10, HasEdges = true, Edges = 4, HasScroll = true }},
             { RadioType.K4,       new WaterFallProperties(){ MinRef = -140, MaxRef = 10, HasEdges = false, Edges = 1, HasScroll = true }},
-            { RadioType.P3,       new WaterFallProperties(){ MinRef = -140, MaxRef = 10, HasEdges = false, Edges = 1, HasScroll = true }},
+            { RadioType.K3P3,     new WaterFallProperties(){ MinRef = -140, MaxRef = 10, HasEdges = false, Edges = 1, HasScroll = true }},
             { RadioType.IC7851,   new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
             { RadioType.IC7850,   new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
             { RadioType.FTDX10,   new WaterFallProperties(){ MinRef = -20, MaxRef = 10, HasEdges = false, Edges = 4, HasScroll = true }},
@@ -506,7 +506,7 @@ namespace DXLog.net
                 case RadioType.K4:
                     // TODO: Implement support for K4
                     break;
-                case RadioType.P3:
+                case RadioType.K3P3:
                     // TODO: Implement support for P3
                     break;
                 case RadioType.FTDX101D:
@@ -561,7 +561,7 @@ namespace DXLog.net
                             }
                             break;
                         case RadioType.K4:
-                        case RadioType.P3:
+                        case RadioType.K3P3:
                             string cmd = "#REF$" + ref_level.ToString() + ";";
                             Radio.SendCustomCommand(cmd);
                             break;
@@ -620,12 +620,14 @@ namespace DXLog.net
                             Radio.SendCustomCommand(CIVSetPwrLevel);
                             break;
                         case RadioType.K4:
-                            int watts = 110 * pwr_level;
-                            string cmd = "PC" + watts.ToString("000") + "H;";
+                            int w1 = 110 * pwr_level;
+                            string cmd = "PC" + w1.ToString("000") + "H;";
                             Radio.SendCustomCommand(cmd);
                             break;
-                        case RadioType.P3:
-                            // TODO: Implement support for P3
+                        case RadioType.K3P3:
+                            int w2 = 110 * pwr_level;
+                            string cmd2 = "PC" + w2.ToString("000") + ";";
+                            Radio.SendCustomCommand(cmd2);
                             break;
                         case RadioType.FTDX101D:
                         case RadioType.FTDX10:
