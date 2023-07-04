@@ -10,7 +10,7 @@ namespace DXLog.net
 {
     public enum RadioType
     {
-        None, IC7610, IC7851, IC7300, IC705, IC905, IC9700, K4, FTDX101D, FTDX10
+        None, IC7610, IC7851, IC7300, IC705, IC905, IC9700, K4, P3, FTDX101D, FTDX10, TS890, TS990
     }
 
     public partial class FrmRadioControl1 : KForm
@@ -24,19 +24,6 @@ namespace DXLog.net
         {
             get { return 1022; }
         }
-
-        public Dictionary<RadioType, bool[]> BandsSupportedByRadio = new Dictionary<RadioType, bool[]> {
-            { RadioType.None,     new bool[RadioSettings.Bands] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false }},
-            { RadioType.IC705,    new bool[RadioSettings.Bands] { true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false } },
-            { RadioType.IC7300,   new bool[RadioSettings.Bands] { true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false } },
-            { RadioType.IC7610,   new bool[RadioSettings.Bands] { true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false } },
-            { RadioType.K4,       new bool[RadioSettings.Bands] { true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false } },
-            { RadioType.IC7851,   new bool[RadioSettings.Bands] { true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false } },
-            { RadioType.FTDX10,   new bool[RadioSettings.Bands] { true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false } },
-            { RadioType.FTDX101D, new bool[RadioSettings.Bands] { true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false } },
-            { RadioType.IC9700,   new bool[RadioSettings.Bands] { false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, false, false, false } },
-            { RadioType.IC905,    new bool[RadioSettings.Bands] { false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true } },
-        };
 
         private ContestData _cdata = null;
 
@@ -54,9 +41,6 @@ namespace DXLog.net
 
         private byte[] CIVSetPwrLevel = { 0x14, 0x0a, 0x00, 0x00 };
 
-        private const int MaxMHz = 470;
-        private const int TableSize = 74;
-
         private int CurrentLowerEdge, CurrentUpperEdge, CurrentRefLevel, CurrentPwrLevel;
         private int CurrentMHz = 0;
         private double CurrentFrequency = 0;
@@ -66,51 +50,22 @@ namespace DXLog.net
         CATCommon Radio = null;
 
         RadioSettings Settings = new RadioSettings();
-        //DefaultRadioSettings Default = new DefaultRadioSettings();
 
-        private int BandIndex(double freq)
-        {
-            // Maps frequency to internal band index. Upper limit for each index. 
-            // Bands are 160=0, 80=1, etc. 11=6m, 12=2m, up to 17=3cm
-            int[] _bandlimit = new int[] { 2000, 5000, 6000, 8000, 11000, 15000, 20000, 22000, 26000, 31000, 60000, 75000, 200000, 470000, 1500000, 3000000, 7000000, 11000000 };
-            int _index = 0;
-            for (int i = 0; i < _bandlimit.Length; i++)
-            {
-                if (freq < _bandlimit[i])
-                {
-                    _index = i;
-                    break;
-                }
-            }
-            return _index;
-        }
-
-        private int IcomBandIndex (double freq)
-        {
-            int[] _icomBandlimit;
-
-            switch (Settings.RadioModel)
-            {
-                case RadioType.IC905:
-                case RadioType.IC9700:
-                    _icomBandlimit = new int[] { 0, 148000, 450000, 1300000, 2450000, 5925000, 10600000 };
-                    break;
-                default:
-                    _icomBandlimit = new int[] { 0, 1600, 2000, 6000, 8000, 11000, 15000, 20000, 22000, 26000, 30000, 45000, 60000, 74800, 108000, 137000, 400000, 480000 };
-                    break;
-            }
-
-            int _index = 0;
-            for (int i = 0; i < _icomBandlimit.Length; i++)
-            {
-                if (freq < _icomBandlimit[i])
-                {
-                    _index = i;
-                    break;
-                }
-            }
-            return _index;
-        }
+        public Dictionary<RadioType, int []> RefLevelLimits = new Dictionary<RadioType, int[]> {
+            { RadioType.None,     new int [] { -20, 20 }},
+            { RadioType.IC705,    new int [] { -20, 20 }},
+            { RadioType.IC7300,   new int [] { -20, 20 }},
+            { RadioType.IC7610,   new int [] { -30, 10 }},
+            { RadioType.K4,       new int [] { -40, 40 }},
+            { RadioType.P3,       new int [] { -40, 40 }},
+            { RadioType.IC7851,   new int [] { -20, 20 }},
+            { RadioType.FTDX10,   new int [] { -20, 10 }},
+            { RadioType.FTDX101D, new int [] { -20, 10 }},
+            { RadioType.IC9700,   new int [] { -20, 20 }},
+            { RadioType.IC905,    new int [] { -20, 20 }},
+            { RadioType.TS890,    new int [] { -20, 20 }},
+            { RadioType.TS990,    new int [] { -20, 20 }}
+        };
 
         public int RadioNumber
         {
@@ -162,23 +117,23 @@ namespace DXLog.net
                 {
                     char letter = (char)('A' + i);
 
-                    Settings.LowerEdgeCW[i] = Config.Read("RCWaterfallLowerEdgeCW" + letter, DefaultRadioSettings.LowerEdgeCW).Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.UpperEdgeCW[i] = Config.Read("RCWaterfallUpperEdgeCW" + letter, DefaultRadioSettings.UpperEdgeCW).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.LowerEdgeCW[i] = Config.Read("RCWaterfallLowerEdgeCW" + letter, DefaultSettings.LowerEdgeCW).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.UpperEdgeCW[i] = Config.Read("RCWaterfallUpperEdgeCW" + letter, DefaultSettings.UpperEdgeCW).Split(';').Select(s => int.Parse(s)).ToArray();
 
-                    Settings.LowerEdgePhone[i] = Config.Read("RCWaterfallLowerEdgePhone" + letter, DefaultRadioSettings.LowerEdgePhone).Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.UpperEdgePhone[i] = Config.Read("RCWaterfallUpperEdgePhone" + letter, DefaultRadioSettings.UpperEdgePhone).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.LowerEdgePhone[i] = Config.Read("RCWaterfallLowerEdgePhone" + letter, DefaultSettings.LowerEdgePhone).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.UpperEdgePhone[i] = Config.Read("RCWaterfallUpperEdgePhone" + letter, DefaultSettings.UpperEdgePhone).Split(';').Select(s => int.Parse(s)).ToArray();
 
-                    Settings.LowerEdgeDigital[i] = Config.Read("RCWaterfallLowerEdgeDigital" + letter, DefaultRadioSettings.LowerEdgeDigital).Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.UpperEdgeDigital[i] = Config.Read("RCWaterfallUpperEdgeDigital" + letter, DefaultRadioSettings.UpperEdgeDigital).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.LowerEdgeDigital[i] = Config.Read("RCWaterfallLowerEdgeDigital" + letter, DefaultSettings.LowerEdgeDigital).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.UpperEdgeDigital[i] = Config.Read("RCWaterfallUpperEdgeDigital" + letter, DefaultSettings.UpperEdgeDigital).Split(';').Select(s => int.Parse(s)).ToArray();
 
-                    Settings.EdgeSet[i] = Config.Read("RCWaterfallEdgeSet" + letter, DefaultRadioSettings.EdgeSet);
-                    Settings.UseScrolling[i] = Config.Read("RCWaterfallScrolling" + letter, DefaultRadioSettings.UseScrolling);
+                    Settings.EdgeSet[i] = Config.Read("RCWaterfallEdgeSet" + letter, DefaultSettings.EdgeSet);
+                    Settings.UseScrolling[i] = Config.Read("RCWaterfallScrolling" + letter, DefaultSettings.UseScrolling);
 
                     if (all)
                     {
-                        Settings.RefLevelCW[i] = Config.Read("RCWaterfallRefCW" + letter, DefaultRadioSettings.RefLevelCW).Split(';').Select(s => int.Parse(s)).ToArray();
-                        Settings.RefLevelPhone[i] = Config.Read("RCWaterfallRefPhone" + letter, DefaultRadioSettings.RefLevelPhone).Split(';').Select(s => int.Parse(s)).ToArray();
-                        Settings.RefLevelDigital[i] = Config.Read("RCWaterfallRefDigital" + letter, DefaultRadioSettings.RefLevelDigital).Split(';').Select(s => int.Parse(s)).ToArray();
+                        Settings.RefLevelCW[i] = Config.Read("RCWaterfallRefCW" + letter, DefaultSettings.RefLevelCW).Split(';').Select(s => int.Parse(s)).ToArray();
+                        Settings.RefLevelPhone[i] = Config.Read("RCWaterfallRefPhone" + letter, DefaultSettings.RefLevelPhone).Split(';').Select(s => int.Parse(s)).ToArray();
+                        Settings.RefLevelDigital[i] = Config.Read("RCWaterfallRefDigital" + letter, DefaultSettings.RefLevelDigital).Split(';').Select(s => int.Parse(s)).ToArray();
                     }
 
                     if (Settings.LowerEdgeCW[i].Length != RadioSettings.Bands || Settings.UpperEdgeCW[i].Length != RadioSettings.Bands ||
@@ -192,9 +147,9 @@ namespace DXLog.net
                 }
                 if (all)
                 {
-                    Settings.PwrLevelCW = Config.Read("RCTransmitPowerCW", DefaultRadioSettings.PwrLevelCW).Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.PwrLevelPhone = Config.Read("RCTransmitPowerPhone", DefaultRadioSettings.PwrLevelPhone).Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.PwrLevelDigital = Config.Read("RCTransmitPowerDigital", DefaultRadioSettings.PwrLevelDigital).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.PwrLevelCW = Config.Read("RCTransmitPowerCW", DefaultSettings.PwrLevelCW).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.PwrLevelPhone = Config.Read("RCTransmitPowerPhone", DefaultSettings.PwrLevelPhone).Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.PwrLevelDigital = Config.Read("RCTransmitPowerDigital", DefaultSettings.PwrLevelDigital).Split(';').Select(s => int.Parse(s)).ToArray();
 
                     if (Settings.PwrLevelCW.Length != RadioSettings.Bands || Settings.PwrLevelPhone.Length != RadioSettings.Bands || Settings.PwrLevelDigital.Length != RadioSettings.Bands)
                     {
@@ -207,26 +162,26 @@ namespace DXLog.net
                 for (int i = 0; i < RadioSettings.Configs; i++)
                 {
                     // Settings are somehow corrupted. Reset everything to default.
-                    Settings.LowerEdgeCW[i] = DefaultRadioSettings.LowerEdgeCW.Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.UpperEdgeCW[i] = DefaultRadioSettings.UpperEdgeCW.Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.LowerEdgeCW[i] = DefaultSettings.LowerEdgeCW.Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.UpperEdgeCW[i] = DefaultSettings.UpperEdgeCW.Split(';').Select(s => int.Parse(s)).ToArray();
 
-                    Settings.LowerEdgePhone[i] = DefaultRadioSettings.LowerEdgePhone.Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.UpperEdgePhone[i] = DefaultRadioSettings.UpperEdgePhone.Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.LowerEdgePhone[i] = DefaultSettings.LowerEdgePhone.Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.UpperEdgePhone[i] = DefaultSettings.UpperEdgePhone.Split(';').Select(s => int.Parse(s)).ToArray();
 
-                    Settings.LowerEdgeDigital[i] = DefaultRadioSettings.LowerEdgeDigital.Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.UpperEdgeDigital[i] = DefaultRadioSettings.UpperEdgeDigital.Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.LowerEdgeDigital[i] = DefaultSettings.LowerEdgeDigital.Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.UpperEdgeDigital[i] = DefaultSettings.UpperEdgeDigital.Split(';').Select(s => int.Parse(s)).ToArray();
 
-                    Settings.EdgeSet[i] = DefaultRadioSettings.EdgeSet;
-                    Settings.UseScrolling[i] = DefaultRadioSettings.UseScrolling;
+                    Settings.EdgeSet[i] = DefaultSettings.EdgeSet;
+                    Settings.UseScrolling[i] = DefaultSettings.UseScrolling;
 
-                    Settings.RefLevelCW[i] = DefaultRadioSettings.RefLevelCW.Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.RefLevelPhone[i] = DefaultRadioSettings.RefLevelPhone.Split(';').Select(s => int.Parse(s)).ToArray();
-                    Settings.RefLevelDigital[i] = DefaultRadioSettings.RefLevelDigital.Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.RefLevelCW[i] = DefaultSettings.RefLevelCW.Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.RefLevelPhone[i] = DefaultSettings.RefLevelPhone.Split(';').Select(s => int.Parse(s)).ToArray();
+                    Settings.RefLevelDigital[i] = DefaultSettings.RefLevelDigital.Split(';').Select(s => int.Parse(s)).ToArray();
                 }
 
-                Settings.PwrLevelPhone = DefaultRadioSettings.PwrLevelPhone.Split(';').Select(s => int.Parse(s)).ToArray();
-                Settings.PwrLevelCW = DefaultRadioSettings.PwrLevelCW.Split(';').Select(s => int.Parse(s)).ToArray();
-                Settings.PwrLevelDigital = DefaultRadioSettings.PwrLevelDigital.Split(';').Select(s => int.Parse(s)).ToArray();
+                Settings.PwrLevelPhone = DefaultSettings.PwrLevelPhone.Split(';').Select(s => int.Parse(s)).ToArray();
+                Settings.PwrLevelCW = DefaultSettings.PwrLevelCW.Split(';').Select(s => int.Parse(s)).ToArray();
+                Settings.PwrLevelDigital = DefaultSettings.PwrLevelDigital.Split(';').Select(s => int.Parse(s)).ToArray();
             }
         }
 
@@ -369,6 +324,10 @@ namespace DXLog.net
                     {
                         Settings.RadioModel = RadioType.K4;
                     }
+                    else if (Settings.RadioModelName.Contains("K3"))
+                    {
+                        Settings.RadioModel = RadioType.P3;
+                    }
                 }
                 else if (Settings.RadioModelName.Contains("Yaesu"))
                 {
@@ -381,7 +340,17 @@ namespace DXLog.net
                         Settings.RadioModel = RadioType.FTDX10;
                     }
                 }
-                Settings.SupportedBand = BandsSupportedByRadio[Settings.RadioModel];
+                else if (Settings.RadioModelName.Contains("Kenwood"))
+                {
+                    if (Settings.RadioModelName.Contains("990")) 
+                    { 
+                        Settings.RadioModel = RadioType.TS990; 
+                    }
+                    else if (Settings.RadioModelName.Contains("890"))
+                    {
+                        Settings.RadioModel = RadioType.TS890;
+                    }
+                }
             }
 
             switch (CurrentMode)
@@ -409,6 +378,15 @@ namespace DXLog.net
                     CurrentPwrLevel = Settings.PwrLevelDigital[BandIndex(CurrentFrequency)];
                     break;
             }
+
+            // Update reference level slider ends if radio has changed. Handle out of limits to prevent exception when switching radio.
+            if (CurrentRefLevel < RefLevelLimits[Settings.RadioModel][0] || CurrentRefLevel > RefLevelLimits[Settings.RadioModel][1])
+            {
+                CurrentRefLevel = 0;
+            }
+
+            RefLevelSlider.Minimum = RefLevelLimits[Settings.RadioModel][0];
+            RefLevelSlider.Maximum = RefLevelLimits[Settings.RadioModel][1];
 
             // Update UI and waterfall edges and ref level in radio 
             UpdateRadioEdges(CurrentLowerEdge, CurrentUpperEdge);
@@ -442,8 +420,6 @@ namespace DXLog.net
         {
             CurrentRefLevel = RefLevelSlider.Value;
 
-            UpdateRadioReflevel(CurrentRefLevel);
-
             switch (CurrentMode)
             {
                 case "CW":
@@ -460,6 +436,8 @@ namespace DXLog.net
                     Settings.RefLevelDigital[Settings.Configuration][BandIndex(CurrentFrequency)] = CurrentRefLevel;
                     break;
             }
+
+            UpdateRadioReflevel(CurrentRefLevel);
         }
 
         // on mouse movement of power slider
@@ -556,9 +534,18 @@ namespace DXLog.net
                     Radio.SendCustomCommand(CIVSetEdges);
                     break;
                 case RadioType.K4:
+                    // TODO: Implement support for K4
                     break;
-                case RadioType.FTDX10:
+                case RadioType.P3:
+                    // TODO: Implement support for P3
+                    break;
                 case RadioType.FTDX101D:
+                case RadioType.FTDX10:
+                    // TODO: Implement support for Yaesu
+                    break;
+                case RadioType.TS890:
+                case RadioType.TS990:
+                    // TODO: Implement support for Kenwood
                     break;
                 default:
                     break;
@@ -604,9 +591,19 @@ namespace DXLog.net
                             }
                             break;
                         case RadioType.K4:
+                            string cmd = "#REF$" + ref_level.ToString() + ";";
+                            Radio.SendCustomCommand(cmd);
                             break;
-                        case RadioType.FTDX10:
+                        case RadioType.P3:
+                            // TODO: Implement support for P3
+                            break;
                         case RadioType.FTDX101D:
+                        case RadioType.FTDX10:
+                            // TODO: Implement support for Yaesu
+                            break;
+                        case RadioType.TS890:
+                        case RadioType.TS990:
+                            // TODO: Implement support for Kenwood
                             break;
                         default:
                             break;
@@ -632,51 +629,103 @@ namespace DXLog.net
                     PwrLevelLabel.Text = string.Format("PWR:{0,3}%", pwr_level);
                     PwrLevelSlider.Enabled = true;
 
-                    if (Settings.RefLevelControl)
+                    switch (Settings.RadioModel)
                     {
-                        switch (Settings.RadioModel)
-                        {
-                            case RadioType.IC7610:
-                            case RadioType.IC7300:
-                            case RadioType.IC705:
-                            case RadioType.IC7851:
-                            case RadioType.IC905:
-                            case RadioType.IC9700:
-                                int icomPower = (int)(255.0f * pwr_level / 100.0f + 0.99f); // Weird ICOM mapping of percent to binary
+                        case RadioType.IC7610:
+                        case RadioType.IC7300:
+                        case RadioType.IC705:
+                        case RadioType.IC7851:
+                        case RadioType.IC905:
+                        case RadioType.IC9700:
+                            int icomPower = (int)(255.0f * pwr_level / 100.0f + 0.99f); // Weird ICOM mapping of percent to binary
 
-                                CIVSetPwrLevel[2] = (byte)((icomPower / 100) % 10);
-                                CIVSetPwrLevel[3] = (byte)((((icomPower / 10) % 10) << 4) + (icomPower % 10));
+                            CIVSetPwrLevel[2] = (byte)((icomPower / 100) % 10);
+                            CIVSetPwrLevel[3] = (byte)((((icomPower / 10) % 10) << 4) + (icomPower % 10));
 
-                                //debuglabel1.Text = BitConverter.ToString(CIVSetPwrLevel).Replace("-", " ");
-                                //debuglabel2.Text = "";
-                                //debuglabel3.Text = "";
-                                if (Radio != null && Radio.IsICOM())
-                                {
-                                    Radio.SendCustomCommand(CIVSetPwrLevel);
-                                }
-                                break;
-                            case RadioType.K4:
-                                break;
-                            case RadioType.FTDX101D:
-                            case RadioType.FTDX10:
-                                break;
-                            default:
-                                break;
-
-                        }
+                            //debuglabel1.Text = BitConverter.ToString(CIVSetPwrLevel).Replace("-", " ");
+                            //debuglabel2.Text = "";
+                            //debuglabel3.Text = "";
+                            if (Radio != null && Radio.IsICOM())
+                            {
+                                Radio.SendCustomCommand(CIVSetPwrLevel);
+                            }
+                            break;
+                        case RadioType.K4:
+                            int watts = 110 * pwr_level;
+                            string cmd = "PC" + watts.ToString("000") + "H;";
+                            Radio.SendCustomCommand(cmd);
+                            break;
+                        case RadioType.P3:
+                            // TODO: Implement support for P3
+                            break;
+                        case RadioType.FTDX101D:
+                        case RadioType.FTDX10:
+                            // TODO: Implement support for Yaesu
+                            break;
+                        case RadioType.TS890:
+                        case RadioType.TS990:
+                            // TODO: Implement support for Kenwood
+                            break;
+                        default:
+                            break;
                     }
-                    else
-                    {
-                        PwrLevelSlider.Value = 0;
-                        PwrLevelSlider.Enabled = false;
-                        PwrLevelLabel.Text = "PWR: -";
-                    }
+                }
+                else
+                {
+                    PwrLevelSlider.Value = 0;
+                    PwrLevelSlider.Enabled = false;
+                    PwrLevelLabel.Text = "PWR: -";
                 }
             }
         }
+
+        private int BandIndex(double freq)
+        {
+            // Maps frequency to internal band index. Upper limit for each index. 
+            // Bands are 160=0, 80=1, etc. 11=6m, 12=2m, up to 17=3cm
+            int[] _bandlimit = new int[] { 2000, 5000, 6000, 8000, 11000, 15000, 20000, 22000, 26000, 31000, 60000, 75000, 200000, 470000, 1500000, 3000000, 7000000, 11000000 };
+            int _index = 0;
+            for (int i = 0; i < _bandlimit.Length; i++)
+            {
+                if (freq < _bandlimit[i])
+                {
+                    _index = i;
+                    break;
+                }
+            }
+            return _index;
+        }
+
+        private int IcomBandIndex(double freq)
+        {
+            int[] _icomBandlimit;
+
+            switch (Settings.RadioModel)
+            {
+                case RadioType.IC905:
+                case RadioType.IC9700:
+                    _icomBandlimit = new int[] { 0, 148000, 450000, 1300000, 2450000, 5925000, 10600000 };
+                    break;
+                default:
+                    _icomBandlimit = new int[] { 0, 1600, 2000, 6000, 8000, 11000, 15000, 20000, 22000, 26000, 30000, 45000, 60000, 74800, 108000, 137000, 400000, 480000 };
+                    break;
+            }
+
+            int _index = 0;
+            for (int i = 0; i < _icomBandlimit.Length; i++)
+            {
+                if (freq < _icomBandlimit[i])
+                {
+                    _index = i;
+                    break;
+                }
+            }
+            return _index;
+        }
     }
 
-    public class DefaultRadioSettings
+
+    public class DefaultSettings
     {
         public const string LowerEdgeCW = "1810;3500;5352;7000;10100;14000;18068;21000;24890;28000;50000;70000;144000;432000;1296000;2320000;5650000;10000000";
         public const string UpperEdgeCW = "1840;3570;5366;7040;10130;14070;18109;21070;24920;28070;50150;71000;144100;432100;1296100;2320100;5650100;10000100";

@@ -55,19 +55,12 @@ namespace DXLog.net
                 TextBox tbdgl = (TextBox)Controls.Find(string.Format("tbdgl{0}", i), true)[0];
                 TextBox tbdgu = (TextBox)Controls.Find(string.Format("tbdgu{0}", i), true)[0];
 
-                bool _sup = ConfigSettings.SupportedBand[i];
                 tbcwl.Text = ConfigSettings.LowerEdgeCW[ConfigSettings.Configuration][i].ToString();
-                tbcwl.Enabled = _sup;
                 tbcwu.Text = ConfigSettings.UpperEdgeCW[ConfigSettings.Configuration][i].ToString();
-                tbcwu.Enabled = _sup;
                 tbphl.Text = ConfigSettings.LowerEdgePhone[ConfigSettings.Configuration][i].ToString();
-                tbphl.Enabled = _sup;
                 tbphu.Text = ConfigSettings.UpperEdgePhone[ConfigSettings.Configuration][i].ToString();
-                tbphu.Enabled = _sup;
                 tbdgl.Text = ConfigSettings.LowerEdgeDigital[ConfigSettings.Configuration][i].ToString();
-                tbdgl.Enabled = _sup;
                 tbdgu.Text = ConfigSettings.UpperEdgeDigital[ConfigSettings.Configuration][i].ToString();
-                tbdgu.Enabled = _sup;
             }
 
             // Do this last since it triggers a callback
@@ -142,20 +135,20 @@ namespace DXLog.net
         {
             //DefaultRadioSettings def = new DefaultRadioSettings();
 
-            ConfigSettings.LowerEdgeCW[cbConfiguration.SelectedIndex] = DefaultRadioSettings.LowerEdgeCW.Split(';').Select(s => int.Parse(s)).ToArray();
-            ConfigSettings.UpperEdgeCW[cbConfiguration.SelectedIndex] = DefaultRadioSettings.UpperEdgeCW.Split(';').Select(s => int.Parse(s)).ToArray();
-            ConfigSettings.RefLevelCW[cbConfiguration.SelectedIndex] = DefaultRadioSettings.RefLevelCW.Split(';').Select(s => int.Parse(s)).ToArray();
-            ConfigSettings.PwrLevelCW = DefaultRadioSettings.PwrLevelCW.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.LowerEdgeCW[cbConfiguration.SelectedIndex] = DefaultSettings.LowerEdgeCW.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.UpperEdgeCW[cbConfiguration.SelectedIndex] = DefaultSettings.UpperEdgeCW.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.RefLevelCW[cbConfiguration.SelectedIndex] = DefaultSettings.RefLevelCW.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.PwrLevelCW = DefaultSettings.PwrLevelCW.Split(';').Select(s => int.Parse(s)).ToArray();
 
-            ConfigSettings.LowerEdgePhone[cbConfiguration.SelectedIndex] = DefaultRadioSettings.LowerEdgePhone.Split(';').Select(s => int.Parse(s)).ToArray();
-            ConfigSettings.UpperEdgePhone[cbConfiguration.SelectedIndex] = DefaultRadioSettings.UpperEdgePhone.Split(';').Select(s => int.Parse(s)).ToArray();
-            ConfigSettings.RefLevelPhone[cbConfiguration.SelectedIndex] = DefaultRadioSettings.RefLevelPhone.Split(';').Select(s => int.Parse(s)).ToArray();
-            ConfigSettings.PwrLevelPhone = DefaultRadioSettings.PwrLevelPhone.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.LowerEdgePhone[cbConfiguration.SelectedIndex] = DefaultSettings.LowerEdgePhone.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.UpperEdgePhone[cbConfiguration.SelectedIndex] = DefaultSettings.UpperEdgePhone.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.RefLevelPhone[cbConfiguration.SelectedIndex] = DefaultSettings.RefLevelPhone.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.PwrLevelPhone = DefaultSettings.PwrLevelPhone.Split(';').Select(s => int.Parse(s)).ToArray();
 
-            ConfigSettings.LowerEdgeDigital[cbConfiguration.SelectedIndex] = DefaultRadioSettings.LowerEdgeDigital.Split(';').Select(s => int.Parse(s)).ToArray();
-            ConfigSettings.UpperEdgeDigital[cbConfiguration.SelectedIndex] = DefaultRadioSettings.UpperEdgeDigital.Split(';').Select(s => int.Parse(s)).ToArray();
-            ConfigSettings.RefLevelDigital[cbConfiguration.SelectedIndex] = DefaultRadioSettings.RefLevelDigital.Split(';').Select(s => int.Parse(s)).ToArray();
-            ConfigSettings.PwrLevelDigital = DefaultRadioSettings.PwrLevelDigital.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.LowerEdgeDigital[cbConfiguration.SelectedIndex] = DefaultSettings.LowerEdgeDigital.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.UpperEdgeDigital[cbConfiguration.SelectedIndex] = DefaultSettings.UpperEdgeDigital.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.RefLevelDigital[cbConfiguration.SelectedIndex] = DefaultSettings.RefLevelDigital.Split(';').Select(s => int.Parse(s)).ToArray();
+            ConfigSettings.PwrLevelDigital = DefaultSettings.PwrLevelDigital.Split(';').Select(s => int.Parse(s)).ToArray();
 
             refreshTable();
         }
