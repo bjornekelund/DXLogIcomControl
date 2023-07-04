@@ -23,9 +23,21 @@ namespace DXLog.net
 
             ConfigSettings = sett;
 
-            for (int i = 1; i <= 4; i++)
+            if (ConfigSettings.HasEdgeControl)
             {
-                cbEdgeSelection.Items.Add(i.ToString());
+                cbEdgeSelection.Enabled = true;
+                for (int i = 1; i <= RadioSettings.Edges; i++)
+                {
+                    cbEdgeSelection.Items.Add(i.ToString());
+                }
+            }
+            else
+            {
+                cbEdgeSelection.Enabled = false;
+                for (int i = 1; i <= RadioSettings.Edges; i++)
+                {
+                    cbEdgeSelection.Items.Add("-");
+                }
             }
 
             for (char letter = 'A'; letter < 'A' + RadioSettings.Configs; letter++)
@@ -33,7 +45,6 @@ namespace DXLog.net
                 cbConfiguration.Items.Add("Configuration " + letter);
             }
 
-            cbEdgeSelection.Enabled = ConfigSettings.HasEdgeControl;
             chkUseScrollMode.Enabled = ConfigSettings.HasScroll;
 
             lbRadioName.Text = ConfigSettings.RadioModelName;

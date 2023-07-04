@@ -10,8 +10,9 @@ namespace DXLog.net
 {
     public enum RadioType
     {
-        None, IC7610, IC7851, IC7300, IC705, IC905, IC9700, K4, P3, FTDX101D, FTDX10, TS890, TS990
+        None, IC7610, IC7851, IC7850, IC7300, IC705, IC905, IC9700, K4, P3, FTDX101D, FTDX10, TS890, TS990
     }
+
 
     public partial class FrmRadioControl1 : KForm
     {
@@ -25,25 +26,35 @@ namespace DXLog.net
             get { return 1022; }
         }
 
+        public class RadioMapType
+        {
+            public string Brand;
+            public string Model;
+            public RadioType Radio;
+        };
+
+        public RadioMapType[] RadioMap = new RadioMapType [] {
+            new RadioMapType { Brand = "Kenwood", Model = "890", Radio = RadioType.TS890 },
+            new RadioMapType { Brand = "Kenwood", Model = "990", Radio = RadioType.TS990 },
+            new RadioMapType { Brand = "Elecraft", Model = "K3", Radio = RadioType.P3 },
+            new RadioMapType { Brand = "Elecraft", Model = "K4", Radio = RadioType.K4 },
+            new RadioMapType { Brand = "ICOM", Model = "7610", Radio = RadioType.IC7610 },
+            new RadioMapType { Brand = "ICOM", Model = "7850", Radio = RadioType.IC7850 },
+            new RadioMapType { Brand = "ICOM", Model = "7851", Radio = RadioType.IC7851 },
+            new RadioMapType { Brand = "ICOM", Model = "7300", Radio = RadioType.IC7300 },
+            new RadioMapType { Brand = "ICOM", Model = "705", Radio = RadioType.IC705 },
+            new RadioMapType { Brand = "ICOM", Model = "9700", Radio = RadioType.IC9700 },
+            new RadioMapType { Brand = "ICOM", Model = "905", Radio = RadioType.IC905 },
+            new RadioMapType { Brand = "Yaesu", Model = "101D", Radio = RadioType.FTDX101D },
+            new RadioMapType { Brand = "Yaesu", Model = "DX10", Radio = RadioType.FTDX10 },
+        }; 
+
         private ContestData _cdata = null;
 
         private FrmMain _mainform = null;
 
-        // Pre-baked CI-V commands
-        private byte[] CIVSetFixedModeMain = { 0x27, 0x14, 0x00, 0x01 };
-        //private byte[] CIVSetFixedModeSub = { 0x27, 0x14, 0x01, 0x01 };
-
-        private byte[] CIVSetEdgeSetMain = { 0x27, 0x16, 0x00, 0xff };
-        //private byte[] CIVSetEdgeSetSub = { 0x27, 0x16, 0x01, 0xff };
-
-        private byte[] CIVSetRefLevelMain = { 0x27, 0x19, 0x00, 0x00, 0x00, 0x00 };
-        //private byte[] CIVSetRefLevelSub = { 0x27, 0x19, 0x01, 0x00, 0x00, 0x00 };
-
-        private byte[] CIVSetPwrLevel = { 0x14, 0x0a, 0x00, 0x00 };
-
         private int CurrentLowerEdge, CurrentUpperEdge, CurrentRefLevel, CurrentPwrLevel;
-        private int CurrentMHz = 0;
-        private double CurrentFrequency = 0;
+        private double CurrentFrequency = 0.0;
         private string CurrentMode = string.Empty;
         private int _radioNumber = 1;
 
@@ -51,22 +62,30 @@ namespace DXLog.net
 
         RadioSettings Settings = new RadioSettings();
 
-        public Dictionary<RadioType, bool> HasEdges = new Dictionary<RadioType, bool> { { RadioType.None, true } };
+        class WaterFallProperties
+        {
+            public int MinRef;
+            public int MaxRef;
+            public bool HasEdges;
+            public int Edges;
+            public bool HasScroll;
+        }
 
-        public Dictionary<RadioType, int []> RefLevelLimits = new Dictionary<RadioType, int[]> {
-            { RadioType.None,     new int [] { -20, 20 }},
-            { RadioType.IC705,    new int [] { -20, 20 }},
-            { RadioType.IC7300,   new int [] { -20, 20 }},
-            { RadioType.IC7610,   new int [] { -30, 10 }},
-            { RadioType.K4,       new int [] { -40, 40 }},
-            { RadioType.P3,       new int [] { -40, 40 }},
-            { RadioType.IC7851,   new int [] { -20, 20 }},
-            { RadioType.FTDX10,   new int [] { -20, 10 }},
-            { RadioType.FTDX101D, new int [] { -20, 10 }},
-            { RadioType.IC9700,   new int [] { -20, 20 }},
-            { RadioType.IC905,    new int [] { -20, 20 }},
-            { RadioType.TS890,    new int [] { -20, 20 }},
-            { RadioType.TS990,    new int [] { -20, 20 }}
+        Dictionary<RadioType, WaterFallProperties> Waterfall = new Dictionary<RadioType, WaterFallProperties> {
+            { RadioType.None,     new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = false, Edges = 1, HasScroll = false }},
+            { RadioType.IC705,    new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
+            { RadioType.IC7300,   new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
+            { RadioType.IC7610,   new WaterFallProperties(){ MinRef = -30, MaxRef = 10, HasEdges = true, Edges = 4, HasScroll = true }},
+            { RadioType.K4,       new WaterFallProperties(){ MinRef = -140, MaxRef = 10, HasEdges = false, Edges = 1, HasScroll = true }},
+            { RadioType.P3,       new WaterFallProperties(){ MinRef = -140, MaxRef = 10, HasEdges = false, Edges = 1, HasScroll = true }},
+            { RadioType.IC7851,   new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
+            { RadioType.IC7850,   new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
+            { RadioType.FTDX10,   new WaterFallProperties(){ MinRef = -20, MaxRef = 10, HasEdges = false, Edges = 4, HasScroll = true }},
+            { RadioType.FTDX101D, new WaterFallProperties(){ MinRef = -20, MaxRef = 10, HasEdges = false, Edges = 4, HasScroll = true }},
+            { RadioType.IC9700,   new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
+            { RadioType.IC905,    new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
+            { RadioType.TS890,    new WaterFallProperties(){ MinRef = -20, MaxRef = 10, HasEdges = true, Edges = 4, HasScroll = true }},
+            { RadioType.TS990,    new WaterFallProperties(){ MinRef = -20, MaxRef = 10, HasEdges = true, Edges = 4, HasScroll = true }}
         };
 
         public int RadioNumber
@@ -92,7 +111,10 @@ namespace DXLog.net
             _cdata = contestdata;
 
             while (contextMenuStrip1.Items.Count > 0)
+            {
                 contextMenuStrip2.Items.Add(contextMenuStrip1.Items[0]);
+            }
+
             contextMenuStrip2.Items.RemoveByKey("fixWindowSizeToolStripMenuItem");
             contextMenuStrip2.Items.RemoveByKey("fontSizeToolStripMenuItem");
             contextMenuStrip2.Items.RemoveByKey("colorsToolStripMenuItem");
@@ -142,7 +164,8 @@ namespace DXLog.net
                         Settings.LowerEdgePhone[i].Length != RadioSettings.Bands || Settings.UpperEdgePhone[i].Length != RadioSettings.Bands ||
                         Settings.LowerEdgeDigital[i].Length != RadioSettings.Bands || Settings.UpperEdgeDigital[i].Length != RadioSettings.Bands ||
                         Settings.EdgeSet.Length != RadioSettings.Edges || Settings.UseScrolling.Length != RadioSettings.Configs ||
-                        Settings.RefLevelCW[i].Length != RadioSettings.Bands || Settings.RefLevelPhone[i].Length != RadioSettings.Bands || Settings.RefLevelDigital[i].Length != RadioSettings.Bands)
+                        Settings.RefLevelCW[i].Length != RadioSettings.Bands || Settings.RefLevelPhone[i].Length != RadioSettings.Bands || Settings.RefLevelDigital[i].Length != RadioSettings.Bands ||
+                        Settings.EdgeSet[i] > RadioSettings.Edges)
                     {
                         throw new Exception();
                     }
@@ -267,14 +290,12 @@ namespace DXLog.net
             {
                 _physicalRadio = 1;
                 CurrentFrequency = _selradio == 1 ? _cdata.Radio1_FreqA : _cdata.Radio1_FreqB;
-                CurrentMHz = (int)(_selradio == 1 ? _cdata.Radio1_FreqA : _cdata.Radio1_FreqB) / 1000;
                 CurrentMode = _selradio == 1 ? _cdata.Radio1_ModeA : _cdata.Radio1_ModeB;
             }
             else
             {
                 _physicalRadio = _selradio;
                 if (_radioNumber != _selradio) return;
-                CurrentMHz = (int)(_selradio == 1 ? _cdata.Radio1_ActiveFreq : _cdata.Radio2_ActiveFreq) / 1000;
                 CurrentFrequency = _selradio == 1 ? _cdata.Radio1_ActiveFreq : _cdata.Radio2_ActiveFreq;
                 CurrentMode = _selradio == 1 ? _cdata.Radio1_ActiveMode : _cdata.Radio2_ActiveMode;
             }
@@ -289,74 +310,20 @@ namespace DXLog.net
             }
             else
             {
+                Settings.RadioModel = RadioType.None;
                 Settings.RadioModelName = Radio.GetType().GetField("RadioID").GetValue(null).ToString();
-                if (Radio.IsICOM())
+                foreach (RadioMapType r in RadioMap)
                 {
-                    Settings.HasEdgeControl = true;
-                    Settings.HasScroll = true;
-
-                    if (Settings.RadioModelName.Contains("7850") || Settings.RadioModelName.Contains("7851"))
+                    if (Settings.RadioModelName.Contains(r.Brand) && Settings.RadioModelName.Contains(r.Model))
                     {
-                        Settings.RadioModel = RadioType.IC7851;
-                    }
-                    else if (Settings.RadioModelName.Contains("7610"))
-                    {
-                        Settings.RadioModel = RadioType.IC7610;
-                    }
-                    else if (Settings.RadioModelName.Contains("7300"))
-                    {
-                        Settings.RadioModel = RadioType.IC7300;
-                    }
-                    else if (Settings.RadioModelName.Contains("705"))
-                    {
-                        Settings.RadioModel = RadioType.IC705;
-                    }
-                    else if (Settings.RadioModelName.Contains("9700"))
-                    {
-                        Settings.RadioModel = RadioType.IC9700;
-                    }
-                    else if (Settings.RadioModelName.Contains("905"))
-                    {
-                        Settings.RadioModel = RadioType.IC905;
-                    }
-                }
-                else if (Settings.RadioModelName.Contains("Elecraft"))
-                {
-                    if (Settings.RadioModelName.Contains("K4"))
-                    {
-                        Settings.RadioModel = RadioType.K4;
-                    }
-                    else if (Settings.RadioModelName.Contains("K3"))
-                    {
-                        Settings.RadioModel = RadioType.P3;
-                    }
-                }
-                else if (Settings.RadioModelName.Contains("Yaesu"))
-                {
-                    if (Settings.RadioModelName.Contains("FTDX101D"))
-                    {
-                        Settings.RadioModel = RadioType.FTDX101D;
-                    }
-                    else if (Settings.RadioModelName.Contains("FTDX10"))
-                    {
-                        Settings.RadioModel = RadioType.FTDX10;
-                    }
-                }
-                else if (Settings.RadioModelName.Contains("Kenwood"))
-                {
-                    Settings.HasEdgeControl = true;
-                    Settings.HasScroll = true;
-
-                    if (Settings.RadioModelName.Contains("990")) 
-                    { 
-                        Settings.RadioModel = RadioType.TS990; 
-                    }
-                    else if (Settings.RadioModelName.Contains("890"))
-                    {
-                        Settings.RadioModel = RadioType.TS890;
+                        Settings.RadioModel = r.Radio;
+                        break;
                     }
                 }
             }
+
+            Settings.HasEdgeControl = Waterfall[Settings.RadioModel].HasEdges ;
+            Settings.HasScroll = Waterfall[Settings.RadioModel].HasScroll;
 
             switch (CurrentMode)
             {
@@ -385,13 +352,13 @@ namespace DXLog.net
             }
 
             // Update reference level slider ends if radio has changed. Handle out of limits to prevent exception when switching radio.
-            if (CurrentRefLevel < RefLevelLimits[Settings.RadioModel][0] || CurrentRefLevel > RefLevelLimits[Settings.RadioModel][1])
+            if (CurrentRefLevel < Waterfall[Settings.RadioModel].MinRef || CurrentRefLevel > Waterfall[Settings.RadioModel].MaxRef)
             {
                 CurrentRefLevel = 0;
             }
 
-            RefLevelSlider.Minimum = RefLevelLimits[Settings.RadioModel][0];
-            RefLevelSlider.Maximum = RefLevelLimits[Settings.RadioModel][1];
+            RefLevelSlider.Minimum = Waterfall[Settings.RadioModel].MinRef;
+            RefLevelSlider.Maximum = Waterfall[Settings.RadioModel].MaxRef;
 
             // Update UI and waterfall edges and ref level in radio 
             UpdateRadioEdges(CurrentLowerEdge, CurrentUpperEdge);
@@ -459,7 +426,7 @@ namespace DXLog.net
         private void OnPwrSlider()
         {
             CurrentPwrLevel = PwrLevelSlider.Value;
-            if (CurrentMHz != 0)
+            if (CurrentFrequency > 0.0)
             {
                 switch (CurrentMode)
                 {
@@ -506,6 +473,9 @@ namespace DXLog.net
                 case RadioType.IC7851:
                 case RadioType.IC905:
                 case RadioType.IC9700:
+                    byte[] CIVSetFixedModeMain = { 0x27, 0x14, 0x00, 0x01 };
+                    byte[] CIVSetEdgeSetMain = { 0x27, 0x16, 0x00, 0xff };
+
                     // Compose CI-V command to set waterfall edges
                     byte[] CIVSetEdges = new byte[] {
                     0x27, 0x1e,
@@ -525,17 +495,12 @@ namespace DXLog.net
                     CIVSetFixedModeMain[3] = (byte)(Settings.UseScrolling[Settings.Configuration] ? 0x03 : 0x01);
                     CIVSetEdgeSetMain[3] = (byte)Settings.EdgeSet[Settings.Configuration];
 
-                    //CIVSetFixedModeSub[3] = (byte)(Set.Scrolling ? 0x03 : 0x01);
-                    //CIVSetEdgeSetSub[3] = (byte)Set.EdgeSet;
-
                     //debuglabel1.Text = BitConverter.ToString(CIVSetFixedModeMain).Replace("-", " ");
                     //debuglabel2.Text = BitConverter.ToString(CIVSetEdgeSetMain).Replace("-", " ");
                     //debuglabel3.Text = BitConverter.ToString(CIVSetEdges).Replace("-", " ");
 
                     Radio.SendCustomCommand(CIVSetFixedModeMain);
-                    //Radio.SendCustomCommand(CIVSetFixedModeSub);
                     Radio.SendCustomCommand(CIVSetEdgeSetMain);
-                    //Radio.SendCustomCommand(CIVSetEdgeSetSub);
                     Radio.SendCustomCommand(CIVSetEdges);
                     break;
                 case RadioType.K4:
@@ -580,30 +545,25 @@ namespace DXLog.net
                         case RadioType.IC7851:
                         case RadioType.IC905:
                         case RadioType.IC9700:
+                            byte[] CIVSetRefLevelMain = { 0x27, 0x19, 0x00, 0x00, 0x00, 0x00 };
                             int absRefLevel = (ref_level >= 0) ? ref_level : -ref_level;
 
                             CIVSetRefLevelMain[3] = (byte)((absRefLevel / 10) * 16 + absRefLevel % 10);
                             CIVSetRefLevelMain[5] = (ref_level >= 0) ? (byte)0 : (byte)1;
 
-                            //CIVSetRefLevelSub[3] = (byte)((absRefLevel / 10) * 16 + absRefLevel % 10);
-                            //CIVSetRefLevelSub[5] = (ref_level >= 0) ? (byte)0 : (byte)1;
-
                             //debuglabel1.Text = BitConverter.ToString(CIVSetRefLevel).Replace("-", " ");
                             //debuglabel2.Text = "";
                             //debuglabel3.Text = "";
 
-                            if (Radio != null && Radio.IsICOM() && Settings.RefLevelControl)
+                            if (Settings.RefLevelControl)
                             {
                                 Radio.SendCustomCommand(CIVSetRefLevelMain);
-                                //Radio.SendCustomCommand(CIVSetRefLevelSub);
                             }
                             break;
                         case RadioType.K4:
+                        case RadioType.P3:
                             string cmd = "#REF$" + ref_level.ToString() + ";";
                             Radio.SendCustomCommand(cmd);
-                            break;
-                        case RadioType.P3:
-                            // TODO: Implement support for P3
                             break;
                         case RadioType.FTDX101D:
                         case RadioType.FTDX10:
@@ -615,7 +575,7 @@ namespace DXLog.net
                             string cmd2 = "BSC" + kval.ToString("000") + ";";
                             Radio.SendCustomCommand(cmd2);
                             break;
-                        default:
+                        default: // No radio
                             break;
                     }
                 }
@@ -647,6 +607,8 @@ namespace DXLog.net
                         case RadioType.IC7851:
                         case RadioType.IC905:
                         case RadioType.IC9700:
+                            byte[] CIVSetPwrLevel = { 0x14, 0x0a, 0x00, 0x00 };
+
                             int icomPower = (int)(255.0f * pwr_level / 100.0f + 0.99f); // Weird ICOM mapping of percent to binary
 
                             CIVSetPwrLevel[2] = (byte)((icomPower / 100) % 10);
@@ -655,10 +617,7 @@ namespace DXLog.net
                             //debuglabel1.Text = BitConverter.ToString(CIVSetPwrLevel).Replace("-", " ");
                             //debuglabel2.Text = "";
                             //debuglabel3.Text = "";
-                            if (Radio != null && Radio.IsICOM())
-                            {
-                                Radio.SendCustomCommand(CIVSetPwrLevel);
-                            }
+                            Radio.SendCustomCommand(CIVSetPwrLevel);
                             break;
                         case RadioType.K4:
                             int watts = 110 * pwr_level;
@@ -676,7 +635,7 @@ namespace DXLog.net
                         case RadioType.TS990:
                             // TODO: Implement support for Kenwood
                             break;
-                        default:
+                        default: // Unknown or no radio
                             break;
                     }
                 }
