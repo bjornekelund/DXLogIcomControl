@@ -10,9 +10,8 @@ namespace DXLog.net
 {
     public enum RadioType
     {
-        None, IC7610, IC7851, IC7850, IC7300, IC705, IC905, IC9700, K4, K3P3, FTDX101D, FTDX101MP, FTDX10, TS890, TS990
+        None, IC7610, IC7760, IC7851, IC7850, IC7300, IC705, IC905, IC9700, K4, K3P3, FTDX101D, FTDX101MP, FTDX10, TS890, TS990
     }
-
 
     public partial class FrmRadioControl1 : KForm
     {
@@ -39,6 +38,7 @@ namespace DXLog.net
             new RadioMapType { Brand = "Elecraft", Model = "K3", Radio = RadioType.K3P3 },
             new RadioMapType { Brand = "Elecraft", Model = "K4", Radio = RadioType.K4 },
             new RadioMapType { Brand = "ICOM", Model = "7610", Radio = RadioType.IC7610 },
+            new RadioMapType { Brand = "ICOM", Model = "7760", Radio = RadioType.IC7760 },
             new RadioMapType { Brand = "ICOM", Model = "7850", Radio = RadioType.IC7850 },
             new RadioMapType { Brand = "ICOM", Model = "7851", Radio = RadioType.IC7851 },
             new RadioMapType { Brand = "ICOM", Model = "7300", Radio = RadioType.IC7300 },
@@ -50,7 +50,7 @@ namespace DXLog.net
             new RadioMapType { Brand = "Yaesu", Model = "DX10", Radio = RadioType.FTDX10 },
         }; 
 
-        private ContestData _cdata = null;
+        private readonly ContestData _cdata = null;
 
         private FrmMain _mainform = null;
 
@@ -61,7 +61,7 @@ namespace DXLog.net
 
         CATCommon Radio = null;
 
-        RadioSettings Settings = new RadioSettings();
+        readonly RadioSettings Settings = new RadioSettings();
 
         class WaterFallProperties
         {
@@ -72,11 +72,12 @@ namespace DXLog.net
             public bool HasScroll;
         }
 
-        Dictionary<RadioType, WaterFallProperties> Waterfall = new Dictionary<RadioType, WaterFallProperties> {
+        readonly Dictionary<RadioType, WaterFallProperties> Waterfall = new Dictionary<RadioType, WaterFallProperties> {
             { RadioType.None,      new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = false, Edges = 1, HasScroll = false }},
             { RadioType.IC705,     new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
             { RadioType.IC7300,    new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
             { RadioType.IC7610,    new WaterFallProperties(){ MinRef = -30, MaxRef = 10, HasEdges = true, Edges = 4, HasScroll = true }},
+            { RadioType.IC7760,    new WaterFallProperties(){ MinRef = -30, MaxRef = 10, HasEdges = true, Edges = 4, HasScroll = true }},
             { RadioType.IC7851,    new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
             { RadioType.IC7850,    new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
             { RadioType.IC9700,    new WaterFallProperties(){ MinRef = -20, MaxRef = 20, HasEdges = true, Edges = 4, HasScroll = true }},
@@ -371,7 +372,7 @@ namespace DXLog.net
             UpdateRadioPwrlevel(CurrentPwrLevel);
         }
 
-        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void PropertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form prop = new FrmRadioControlProperties(Settings);
 
@@ -471,6 +472,7 @@ namespace DXLog.net
             switch (Settings.RadioModel)
             {
                 case RadioType.IC7610:
+                case RadioType.IC7760:
                 case RadioType.IC7300:
                 case RadioType.IC705:
                 case RadioType.IC7851:
@@ -547,6 +549,7 @@ namespace DXLog.net
                     switch (Settings.RadioModel)
                     {
                         case RadioType.IC7610:
+                        case RadioType.IC7760:
                         case RadioType.IC7300:
                         case RadioType.IC705:
                         case RadioType.IC7851:

@@ -1123,7 +1123,7 @@ namespace DXLog.net
             this.btnOK.TabIndex = 91;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            this.btnOK.Click += new System.EventHandler(this.BtnOK_Click);
             // 
             // btnCancel
             // 
@@ -1135,7 +1135,7 @@ namespace DXLog.net
             this.btnCancel.TabIndex = 90;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // label12
             // 
@@ -1186,7 +1186,7 @@ namespace DXLog.net
             this.btnDefaults.TabIndex = 89;
             this.btnDefaults.Text = "Defaults";
             this.btnDefaults.UseVisualStyleBackColor = true;
-            this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
+            this.btnDefaults.Click += new System.EventHandler(this.BtnDefaults_Click);
             // 
             // cbConfiguration
             // 
@@ -1196,7 +1196,7 @@ namespace DXLog.net
             this.cbConfiguration.Name = "cbConfiguration";
             this.cbConfiguration.Size = new System.Drawing.Size(144, 24);
             this.cbConfiguration.TabIndex = 92;
-            this.cbConfiguration.SelectedIndexChanged += new System.EventHandler(this.cbConfiguration_SelectedIndexChanged);
+            this.cbConfiguration.SelectedIndexChanged += new System.EventHandler(this.CbConfiguration_SelectedIndexChanged);
             // 
             // lbRadioName
             // 

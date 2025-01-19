@@ -49,10 +49,10 @@ namespace DXLog.net
 
             lbRadioName.Text = ConfigSettings.RadioModelName;
 
-            refreshTable();
+            RefreshTable();
         }
 
-        private void refreshTable()
+        private void RefreshTable()
         {
             cbEdgeSelection.SelectedIndex = ConfigSettings.EdgeSet[ConfigSettings.Configuration] - 1;
             chkUseScrollMode.Checked = ConfigSettings.UseScrolling[ConfigSettings.Configuration];
@@ -78,7 +78,7 @@ namespace DXLog.net
             cbConfiguration.SelectedIndex = ConfigSettings.Configuration;
         }
 
-        private bool parseEntries()
+        private bool ParseEntries()
         {
             try
             {
@@ -111,9 +111,9 @@ namespace DXLog.net
             return true;
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
+        private void BtnOK_Click(object sender, EventArgs e)
         {
-            if (parseEntries())
+            if (ParseEntries())
             {
                 Config.Save("RCWaterfallConfiguration", cbConfiguration.SelectedIndex);
 
@@ -136,13 +136,13 @@ namespace DXLog.net
             }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();
         }
 
-        private void btnDefaults_Click(object sender, EventArgs e)
+        private void BtnDefaults_Click(object sender, EventArgs e)
         {
             //DefaultRadioSettings def = new DefaultRadioSettings();
 
@@ -161,15 +161,15 @@ namespace DXLog.net
             ConfigSettings.RefLevelDigital[cbConfiguration.SelectedIndex] = DefaultSettings.RefLevelDigital.Split(';').Select(s => int.Parse(s)).ToArray();
             ConfigSettings.PwrLevelDigital = DefaultSettings.PwrLevelDigital.Split(';').Select(s => int.Parse(s)).ToArray();
 
-            refreshTable();
+            RefreshTable();
         }
 
-        private void cbConfiguration_SelectedIndexChanged(object sender, EventArgs e)
+        private void CbConfiguration_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (parseEntries())
+            if (ParseEntries())
             {
                 ConfigSettings.Configuration = cbConfiguration.SelectedIndex;
-                refreshTable();
+                RefreshTable();
             }
         }
     }
