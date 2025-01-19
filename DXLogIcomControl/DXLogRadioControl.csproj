@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DXLog.net</RootNamespace>
     <AssemblyName>DXLogRadioControl1</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -36,9 +36,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DXLog.net, Version=2.2.13.34462, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="DXLog.net, Version=2.5.53.1, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\DXLog.net\DXLog.net.exe</HintPath>
+      <HintPath>..\..\..\k1xm\DXLog.net\DXLog.net\bin\Debug\DXLog.net.exe</HintPath>
     </Reference>
     <Reference Include="IOComm, Version=2.5.0.26601, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
